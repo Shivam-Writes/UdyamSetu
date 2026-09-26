@@ -156,3 +156,11 @@ button, input, select { font: inherit; }
 .apply-step{transition:.18s ease}
 .apply-step:hover{border-color:#c9c4f7;background:#fcfbff}
 .button:focus-visible,.nav-links a:focus-visible,.apply-step:focus-visible,.search-button:focus-visible{outline:3px solid #d9d5ff;outline-offset:2px}
+
+.browse-note{display:flex;align-items:center;gap:9px;margin-top:20px;padding:13px 15px;background:#f6f5ff;border:1px solid #e7e4ff;border-radius:12px;color:#656e82;font-size:11px}
+.apply-intro-card{max-width:760px}
+.apply-preview{display:flex;align-items:center;gap:12px;padding:15px;background:#f7f7fc;border:1px solid #e9eaf1;border-radius:13px;margin:20px 0}
+.apply-preview b,.apply-preview span{display:block}.apply-preview b{font-size:12px}.apply-preview span{font-size:10px;color:#7b8498;margin-top:4px}
+.apply-checks{display:grid;gap:10px;margin:0 0 24px}.apply-checks div{display:flex;align-items:flex-start;gap:8px;color:#626b7e;font-size:11px;line-height:1.5}.apply-checks svg{color:#1e9650;flex:0 0 auto}
+.about-page{max-width:1000px;margin:0 auto;padding:75px 25px 100px}.about-hero{text-align:center;max-width:760px;margin:0 auto 45px}.about-hero h1{font-size:44px;letter-spacing:-1.5px;margin:10px 0 15px}.about-hero p{color:var(--muted);font-size:14px;line-height:1.75}.about-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.about-card{background:#fff;border:1px solid var(--border);border-radius:17px;padding:25px}.about-card svg{color:#5547dc}.about-card h3{font-size:15px;margin:17px 0 7px}.about-card p{font-size:11px;color:#788297;line-height:1.55;margin:0}.about-note{display:flex;gap:12px;margin-top:18px;padding:18px;background:#f7f7fc;border:1px solid var(--border);border-radius:15px;color:#596379}.about-note svg{color:#5547dc;flex:0 0 auto}.about-note b{font-size:12px}.about-note p{font-size:10px;line-height:1.55;margin:5px 0 0}.auth-back{display:block;margin-top:15px;color:#5547dc;font-size:10px;font-weight:700}
+@media(max-width:800px){.about-grid{grid-template-columns:1fr}.about-hero h1{font-size:35px}}
