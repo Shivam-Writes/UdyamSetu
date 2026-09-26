@@ -789,3 +789,20 @@ img, svg {
 .leaflet-pin::first-letter { transform:rotate(45deg); }
 .real-map .map-label { z-index:500; }
 @media(max-width:600px){.leaflet-map{min-height:300px}.real-map{height:300px}}
+
+/* Keep the map location badge clear of Leaflet zoom controls */
+.real-map .map-label {
+  top: 18px;
+  left: auto;
+  right: 18px;
+  z-index: 500;
+  pointer-events: none;
+}
+@media (max-width: 600px) {
+  .real-map .map-label {
+    top: 14px;
+    right: 14px;
+    font-size: 10px;
+    padding: 8px 10px;
+  }
+}
