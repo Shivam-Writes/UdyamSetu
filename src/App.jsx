@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Link, NavLink, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowRight, Calculator, CheckCircle2, ChevronRight, FileText, Landmark,
   MapPin, Search, ShieldCheck, Sparkles, WalletCards, Users, CircleHelp
@@ -43,8 +43,8 @@ function Navbar() {
         <div><div className="brand-name">UdyamSetu</div><div className="brand-subtitle">Sarkari Yojana se Aapke Udyam Tak</div></div>
       </Link>
       <nav className="nav-links">
-        <Link to="/">Home</Link><Link to="/schemes">Schemes</Link><Link to="/emi-calculator">EMI Calculator</Link>
-        <Link to="/partners">Partners</Link><Link to="/about">About</Link>
+        <NavLink to="/" end>Home</NavLink><NavLink to="/schemes">Schemes</NavLink><NavLink to="/emi-calculator">EMI Calculator</NavLink>
+        <NavLink to="/partners">Partners</NavLink><NavLink to="/about">About</NavLink>
       </nav>
       <div className="nav-actions">
         <button className="search-button" aria-label="Search"><Search size={18}/></button>
