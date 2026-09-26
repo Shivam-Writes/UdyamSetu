@@ -90,8 +90,8 @@ function SchemeDetails(){
 
 function StepHeader({step}){return <div className="step-header"><span>STEP {step} OF 4</span><div className="step-track"><i style={{width:`${step*25}%`}}/></div></div>;}
 
-function Apply({schemeId}){
-  const scheme=schemes.find(s=>s.id===schemeId)||schemes[0];
+function Apply(){
+  const {schemeId}=useParams(); const scheme=schemes.find(s=>s.id===schemeId)||schemes[0];
   return <main className="flow-page"><StepHeader step={1}/><div className="flow-card apply-intro-card"><span className="section-kicker">APPLY FOR {scheme.name}</span><h1>Before you apply</h1><p className="flow-intro">You've selected <b>{scheme.name}</b>. Create your UdyamSetu profile first so the next steps can be tailored to your application.</p><div className="apply-preview"><div className={`scheme-icon ${scheme.accent}`}><scheme.icon size={23}/></div><div><b>{scheme.name}</b><span>{scheme.loan} • {scheme.interest}</span></div></div><div className="apply-checks"><div><CheckCircle2 size={18}/> Keep your identity and income documents ready.</div><div><CheckCircle2 size={18}/> Verify the official scheme requirements before submission.</div><div><CheckCircle2 size={18}/> UdyamSetu only provides guidance; it does not submit the government application.</div></div><Link to={`/profile?scheme=${scheme.id}`} className="button button-primary">Create Profile & Continue <ArrowRight size={17}/></Link></div></main>;
 }
 
