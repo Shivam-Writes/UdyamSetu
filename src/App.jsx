@@ -1,5 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { Link, NavLink, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import {
   ArrowRight, Calculator, CheckCircle2, ChevronRight, FileText, Landmark,
   MapPin, Search, ShieldCheck, Sparkles, WalletCards, Users, CircleHelp,
@@ -141,7 +144,13 @@ function EMICalculator(){
 
 function Partners(){
   const [query,setQuery]=useState(""); const filtered=partners.filter(p=>(p.name+" "+p.location+" "+p.type).toLowerCase().includes(query.toLowerCase()));
-  return <main className="partners-page"><div className="calculator-heading"><span className="section-kicker">CHANNEL PARTNER LOCATOR</span><h1>Find a Partner</h1><p>Discover the next assisted channel for your application journey.</p></div><div className="partner-layout"><div className="partner-map"><div className="map-grid"/><div className="map-pin pin-one"/><div className="map-pin pin-two"/><div className="map-pin pin-three"/><div className="map-label"><MapPin size={16}/> Indore, Madhya Pradesh</div></div><div className="partner-list"><div className="search-field"><Search size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search partner or area"/></div>{filtered.map(p=><article className="partner-card" key={p.name}><div className="partner-icon"><Building2 size={20}/></div><div><h3>{p.name}</h3><p>{p.type}</p><span><MapPin size={13}/> {p.location}</span></div><strong>{p.distance}</strong></article>)}{!filtered.length&&<p className="empty-state">No matching partners in this prototype data.</p>}</div></div></main>;
+  const partnerLocations=[
+    {name:"State Bank of India",position:[22.7533,75.8937],location:"Vijay Nagar, Indore"},
+    {name:"District Industries Centre",position:[22.7196,75.8577],location:"Collectorate Area, Indore"},
+    {name:"Common Service Centre",position:[22.7350,75.9025],location:"Scheme No. 54, Indore"}
+  ];
+  const markerIcon=L.divIcon({className:"custom-map-marker",html:'<div class="leaflet-pin">●</div>',iconSize:[28,28],iconAnchor:[14,28],popupAnchor:[0,-28]});
+  return <main className="partners-page"><div className="calculator-heading"><span className="section-kicker">CHANNEL PARTNER LOCATOR</span><h1>Find a Partner</h1><p>Discover the next assisted channel for your application journey.</p></div><div className="partner-layout"><div className="partner-map real-map"><MapContainer center={[22.7196,75.8577]} zoom={12} scrollWheelZoom={true} className="leaflet-map"><TileLayer attribution='&copy; OpenStreetMap contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />{partnerLocations.map(p=><Marker key={p.name} position={p.position} icon={markerIcon}><Popup><strong>{p.name}</strong><br/>{p.location}</Popup></Marker>)}</MapContainer><div className="map-label"><MapPin size={16}/> Indore, Madhya Pradesh</div></div><div className="partner-list"><div className="search-field"><Search size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search partner or area"/></div>{filtered.map(p=><article className="partner-card" key={p.name}><div className="partner-icon"><Building2 size={20}/></div><div><h3>{p.name}</h3><p>{p.type}</p><span><MapPin size={13}/> {p.location}</span></div><strong>{p.distance}</strong></article>)}{!filtered.length&&<p className="empty-state">No matching partners in this prototype data.</p>}</div></div></main>;
 }
 
 function About(){
