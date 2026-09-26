@@ -49,7 +49,7 @@ function Navbar() {
       <div className="nav-actions">
         <button className="search-button" aria-label="Search"><Search size={18}/></button>
         <Link className="login-link" to="/login">Login</Link>
-        <Link className="button button-primary button-small" to="/profile">Get Started</Link>
+        <Link className="button button-primary button-small" to="/schemes">Get Started</Link>
       </div>
     </header>
   );
