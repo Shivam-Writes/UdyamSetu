@@ -43,7 +43,7 @@ function Navbar(){
   return <header className="navbar">
     <Link to="/" className="brand"><div className="brand-mark">U</div><div><div className="brand-name">UdyamSetu</div><div className="brand-subtitle">Sarkari Yojana se Aapke Udyam Tak</div></div></Link>
     <nav className="nav-links">
-      <NavLink to="/" end>Home</NavLink><NavLink to="/schemes">Schemes</NavLink><NavLink to="/emi-calculator">EMI Calculator</NavLink><NavLink to="/partners">Partners</NavLink><NavLink to="/tracker">Tracker</NavLink><NavLink to="/about">About</NavLink>
+      <NavLink to="/" end>Home</NavLink><NavLink to="/schemes">Schemes</NavLink><NavLink to="/emi-calculator">EMI Calculator</NavLink><NavLink to="/partners">Partners</NavLink><NavLink to="/compare">Compare</NavLink><NavLink to="/tracker">Tracker</NavLink><NavLink to="/about">About</NavLink>
     </nav>
     <div className="nav-actions"><button className="search-button" aria-label="Search"><Search size={18}/></button><Link className="login-link" to="/login">Login</Link><Link className="button button-primary button-small" to="/schemes">Get Started</Link></div>
   </header>;
@@ -77,7 +77,7 @@ function Home(){
 }
 
 function Feature({icon,title,text}){return <div className="feature-card"><div className="feature-icon">{icon}</div><div><h3>{title}</h3><p>{text}</p></div></div>;}
-function SchemeCard({scheme}){const Icon=scheme.icon;return <article className="scheme-card"><div className="card-top"><div className={`scheme-icon ${scheme.accent}`}><Icon size={23}/></div><span className="scheme-tag">{scheme.tag}</span></div><h3>{scheme.name}</h3><p>{scheme.description}</p><Link to={`/schemes/${scheme.id}`} className="card-link">View details <ArrowRight size={16}/></Link></article>;}
+function SchemeCard({scheme}){const Icon=scheme.icon;return <article className="scheme-card"><div className="card-top"><div className={`scheme-icon ${scheme.accent}`}><Icon size={23}/></div><span className="scheme-tag">{scheme.tag}</span></div><h3>{scheme.name}</h3><p>{scheme.description}</p><div className="scheme-card-actions"><Link to={`/schemes/${scheme.id}`} className="card-link">View details <ArrowRight size={16}/></Link><Link to={`/compare?add=${scheme.id}`} className="compare-link">Compare</Link></div></article>;}
 
 function Schemes(){
   return <main className="section page-section"><div className="section-heading"><div><span className="section-kicker">SCHEME DISCOVERY</span><h2>Explore Government Schemes</h2><p>Choose a scheme to open its dedicated information page.</p></div></div><div className="scheme-grid">{schemes.map(s=><SchemeCard key={s.id} scheme={s}/>)}</div><div className="browse-note"><CircleHelp size={17}/><span>Personal details are requested only after you choose a scheme and click Apply.</span></div></main>;
@@ -158,7 +158,30 @@ function Recommendations(){
     navigate("/tracker");
   };
 
-  return <main className="flow-page"><StepHeader step={3}/><div className="wide-card"><div className="results-heading"><div><span className="section-kicker">PERSONALIZED SHORTLIST</span><h1>Recommended schemes</h1><p>Based on the profile and support needs entered in this prototype.</p></div><div className="profile-pill"><CheckCircle2 size={16}/> {eligible?"Profile matches basic prototype rules":"Review eligibility details"}</div></div><div className="recommendation-list">{ranked.map(s=>{const Icon=s.icofunction Tracker(){
+  return <main className="flow-page"><StepHeader step={3}/><div className="wide-card"><div className="results-heading"><div><span className="section-kicker">PERSONALIZED SHORTLIST</span><h1>Recommended schemes</h1><p>Based on the profile and support needs entered in this prototype.</p></div><div className="profile-pill"><CheckCircle2 size={16}/> {eligible?"Profile matches basic prototype rules":"Review eligibility details"}</div></div><div className="recommendation-list">{ranked.map(s=>{const Icon=s.icofunction Compare(){
+  const navigate=useNavigate();
+  const params=new URLSearchParams(window.location.hash.split("?")[1]||"");
+  const initial=params.get("add");
+  const [selectedIds,setSelectedIds]=useState(()=>{const saved=JSON.parse(localStorage.getItem("udyamCompare")||"[]");return initial&&!saved.includes(initial)?[...saved,initial].slice(-3):saved.filter(id=>schemes.some(s=>s.id===id)).slice(0,3);});
+  const selected=selectedIds.map(id=>schemes.find(s=>s.id===id)).filter(Boolean);
+  const toggle=id=>{const next=selectedIds.includes(id)?selectedIds.filter(x=>x!==id):selectedIds.length<3?[...selectedIds,id]:selectedIds;setSelectedIds(next);localStorage.setItem("udyamCompare",JSON.stringify(next));};
+  const rows=[
+    ["Eligibility","eligibility"],["Loan / Support","loan"],["Interest","interest"],
+    ["Purpose","description"],["Key Benefits","benefits"],["Application Route","route"],
+  ];
+  return <main className="compare-page">
+    <div className="calculator-heading"><span className="section-kicker">SCHEME COMPARISON</span><h1>Compare government schemes</h1><p>Select up to 3 schemes and compare their key details before choosing your next step.</p></div>
+    <div className="compare-selector"><div><b>Select schemes</b><span>{selected.length}/3 selected</span></div><div className="compare-options">{schemes.map(s=><button key={s.id} className={"compare-option "+(selectedIds.includes(s.id)?"selected":"")} onClick={()=>toggle(s.id)}><span className={"scheme-icon "+s.accent}>{React.createElement(s.icon,{size:18})}</span><span>{s.name}</span>{selectedIds.includes(s.id)&&<CheckCircle2 size={16}/>}</button>)}</div></div>
+    {selected.length===0?<div className="compare-empty"><div className="tracker-empty-icon"><Landmark size={28}/></div><h2>Choose schemes to compare</h2><p>Select two or three schemes above to see their differences side by side.</p></div>:
+    <div className="compare-table-wrap"><div className="compare-table">
+      <div className="compare-row compare-header"><div className="compare-label">Compare</div>{selected.map(s=>{const Icon=s.icon;return <div className="compare-scheme" key={s.id}><div className={"scheme-icon "+s.accent}><Icon size={20}/></div><b>{s.name}</b><button onClick={()=>toggle(s.id)} aria-label={"Remove "+s.name}>×</button></div>})}</div>
+      {rows.map(([label,key])=><div className="compare-row" key={key}><div className="compare-label">{label}</div>{selected.map(s=><div className="compare-cell" key={s.id}>{key==="benefits"?<ul>{s.benefits.map(b=><li key={b}><CheckCircle2 size={13}/>{b}</li>)}</ul>:key==="route"?<span>Partner / official channel</span>:<span>{s[key]}</span>}</div>)}</div>)}
+      <div className="compare-row compare-actions-row"><div className="compare-label">Next step</div>{selected.map(s=><div className="compare-cell" key={s.id}><Link to={"/schemes/"+s.id} className="button button-secondary">View Details</Link><Link to={"/apply/"+s.id} className="button button-primary">Apply <ArrowRight size={15}/></Link></div>)}</div>
+    </div></div>}
+    <div className="compare-note"><CircleHelp size={16}/><span>Comparison information is for this prototype. Always verify current eligibility, loan limits and requirements with the official scheme source.</span></div>
+  </main>;
+}
+function Tracker(){
   const [applications,setApplications]=useState([]);
   const [selected,setSelected]=useState(null);
 
@@ -286,7 +309,7 @@ function App(){
     <Route path="/" element={<Home/>}/><Route path="/schemes" element={<Schemes/>}/><Route path="/schemes/:id" element={<SchemeDetails/>}/>
     <Route path="/apply/:schemeId" element={<Apply schemeId={null}/>}/>
     <Route path="/profile" element={<Profile/>}/><Route path="/eligibility" element={<Eligibility/>}/><Route path="/recommendations" element={<Recommendations/>}/>
-    <Route path="/tracker" element={<Tracker/>}/><Route path="/documents" element={<Documents/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
+    <Route path="/compare" element={<Compare/>}/><Route path="/tracker" element={<Tracker/>}/><Route path="/documents" element={<Documents/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
   </Routes></>;
 }
 export default App;
