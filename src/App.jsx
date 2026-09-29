@@ -10,27 +10,15 @@ import {
 } from "lucide-react";
 
 const schemes = [
-  {
-    id:"pm-suraj", name:"PM-SURAJ", tag:"SC Entrepreneurs", accent:"violet", icon:Landmark,
-    loan:"Up to ₹25 Lakh", interest:"Concessional",
-    description:"Explore concessional financial support designed for eligible SC beneficiaries and entrepreneurs.",
-    eligibility:"SC beneficiary profile and scheme-specific conditions apply.",
-    benefits:["Concessional financial support","Guidance through the application journey","Partner/channel discovery"]
-  },
-  {
-    id:"nsfdc", name:"NSFDC Loan Support", tag:"Financial Support", accent:"blue", icon:WalletCards,
-    loan:"Scheme dependent", interest:"Concessional",
-    description:"Explore finance options associated with NSFDC and understand the relevant eligibility route.",
-    eligibility:"Eligibility and loan limits depend on the applicable NSFDC scheme.",
-    benefits:["Concessional finance options","Multiple support routes","Application guidance"]
-  },
-  {
-    id:"stand-up-india", name:"Stand Up India", tag:"Business Loan", accent:"amber", icon:Sparkles,
-    loan:"₹10 Lakh – ₹1 Crore", interest:"Bank based",
-    description:"Explore bank-linked support for eligible SC/ST and women entrepreneurs.",
-    eligibility:"Scheme-specific eligibility and bank appraisal apply.",
-    benefits:["Bank-linked credit","Greenfield enterprise support","Guidance on next steps"]
-  }
+  {id:"pm-suraj",name:"PM-SURAJ",tag:"SC Entrepreneurs",accent:"violet",icon:Landmark,loan:"Up to ₹25 Lakh",interest:"Concessional",description:"Explore concessional financial support designed for eligible SC beneficiaries and entrepreneurs.",eligibility:"SC beneficiary profile and scheme-specific conditions apply.",benefits:["Concessional financial support","Guidance through the application journey","Partner/channel discovery"]},
+  {id:"nsfdc",name:"NSFDC Loan Support",tag:"Financial Support",accent:"blue",icon:WalletCards,loan:"Scheme dependent",interest:"Concessional",description:"Explore finance options associated with NSFDC and understand the relevant eligibility route.",eligibility:"Eligibility and loan limits depend on the applicable NSFDC scheme.",benefits:["Concessional finance options","Multiple support routes","Application guidance"]},
+  {id:"stand-up-india",name:"Stand Up India",tag:"Business Loan",accent:"amber",icon:Sparkles,loan:"₹10 Lakh – ₹1 Crore",interest:"Bank based",description:"Explore bank-linked support for eligible SC/ST and women entrepreneurs.",eligibility:"Scheme-specific eligibility and bank appraisal apply.",benefits:["Bank-linked credit","Greenfield enterprise support","Guidance on next steps"]},
+  {id:"pmegp",name:"PMEGP",tag:"Micro Enterprise",accent:"violet",icon:Building2,loan:"Up to ₹50 Lakh",interest:"Credit-linked subsidy",description:"Support for setting up new micro-enterprises in the non-farm sector through credit-linked subsidy.",eligibility:"New micro-enterprise applicants meeting PMEGP conditions.",benefits:["Credit-linked subsidy","Support for new enterprises","Urban and rural coverage"]},
+  {id:"mudra",name:"Pradhan Mantri MUDRA Yojana",tag:"Micro Business",accent:"blue",icon:WalletCards,loan:"Up to ₹20 Lakh",interest:"Bank based",description:"Credit support for eligible micro enterprises and small business activities through participating lenders.",eligibility:"Eligible micro enterprises and borrowers meeting lender and scheme conditions.",benefits:["Shishu, Kishor, Tarun and Tarun Plus categories","Business credit","Wide lender network"]},
+  {id:"pm-vishwakarma",name:"PM Vishwakarma",tag:"Artisans & Craftspeople",accent:"amber",icon:Sparkles,loan:"Up to ₹3 Lakh",interest:"Concessional",description:"Integrated support for eligible traditional artisans and craftspeople, including skill, toolkit and credit support.",eligibility:"Eligible artisans in notified traditional trades, subject to scheme conditions.",benefits:["Skill training","Toolkit support","Concessional credit"]},
+  {id:"cgtmse",name:"CGTMSE",tag:"Credit Guarantee",accent:"blue",icon:ShieldCheck,loan:"Credit guarantee support",interest:"Lender based",description:"Credit guarantee support helps eligible micro and small enterprises access loans without collateral or third-party guarantee, subject to scheme rules.",eligibility:"Eligible new or existing micro and small enterprises through member lending institutions.",benefits:["Collateral-free credit support","Guarantee coverage","Working and investment capital access"]},
+  {id:"sfurti",name:"SFURTI",tag:"Traditional Industries",accent:"amber",icon:Users,loan:"Project-based support",interest:"Government support",description:"Supports traditional industry clusters with technology, marketing and skill development assistance.",eligibility:"Eligible traditional industry clusters and implementing agencies under scheme guidelines.",benefits:["Cluster development","Technology support","Marketing and skill development"]},
+  {id:"nssh",name:"National SC-ST Hub",tag:"SC/ST Entrepreneurs",accent:"violet",icon:Users,loan:"Support based",interest:"Not a standard loan",description:"Support and facilitation for SC/ST entrepreneurs to improve participation in government procurement and enterprise development.",eligibility:"SC/ST entrepreneurs and eligible enterprises under programme guidelines.",benefits:["Procurement support","Capacity building","Market and tender assistance"]}
 ];
 
 const partners = [
