@@ -6,7 +6,7 @@ import "leaflet/dist/leaflet.css";
 import {
   ArrowRight, Calculator, CheckCircle2, ChevronRight, FileText, Landmark,
   MapPin, Search, ShieldCheck, Sparkles, WalletCards, Users, CircleHelp,
-  LogIn, Building2
+  LogIn, Building2, ClipboardCheck, Clock3, UploadCloud, CircleDot, AlertCircle
 } from "lucide-react";
 
 const schemes = [
@@ -43,7 +43,7 @@ function Navbar(){
   return <header className="navbar">
     <Link to="/" className="brand"><div className="brand-mark">U</div><div><div className="brand-name">UdyamSetu</div><div className="brand-subtitle">Sarkari Yojana se Aapke Udyam Tak</div></div></Link>
     <nav className="nav-links">
-      <NavLink to="/" end>Home</NavLink><NavLink to="/schemes">Schemes</NavLink><NavLink to="/emi-calculator">EMI Calculator</NavLink><NavLink to="/partners">Partners</NavLink><NavLink to="/about">About</NavLink>
+      <NavLink to="/" end>Home</NavLink><NavLink to="/schemes">Schemes</NavLink><NavLink to="/emi-calculator">EMI Calculator</NavLink><NavLink to="/partners">Partners</NavLink><NavLink to="/tracker">Tracker</NavLink><NavLink to="/about">About</NavLink>
     </nav>
     <div className="nav-actions"><button className="search-button" aria-label="Search"><Search size={18}/></button><Link className="login-link" to="/login">Login</Link><Link className="button button-primary button-small" to="/schemes">Get Started</Link></div>
   </header>;
@@ -100,10 +100,16 @@ function Apply(){
 
 function Profile(){
   const navigate=useNavigate();
+  const selectedScheme=new URLSearchParams(window.location.hash.split("?")[1]||"").get("scheme")||localStorage.getItem("udyamSelectedScheme")||"";
   const [form,setForm]=useState({name:"",category:"SC",state:"Madhya Pradesh",business:"",income:"",mobile:""});
   const update=e=>setForm({...form,[e.target.name]:e.target.value});
-  const submit=e=>{e.preventDefault();localStorage.setItem("udyamProfile",JSON.stringify(form));navigate("/eligibility");};
-  return <main className="flow-page"><StepHeader step={1}/><div className="flow-card"><span className="section-kicker">CREATE YOUR PROFILE</span><h1>Tell us about yourself</h1><p className="flow-intro">We ask for these details only after you choose to apply for a scheme.</p><form className="form-grid" onSubmit={submit}>
+  const submit=e=>{
+    e.preventDefault();
+    localStorage.setItem("udyamProfile",JSON.stringify(form));
+    if(selectedScheme) localStorage.setItem("udyamSelectedScheme",selectedScheme);
+    navigate("/eligibility");
+  };
+  return <main className="flow-page"><StepHeader step={1}/><div className="flow-card"><span className="section-kicker">CREATE YOUR PROFILE</span><h1>Tell us about yourself</h1><p className="flow-intro">We ask for these details only after you choose to apply for a scheme.</p>{selectedScheme&&<div className="selected-scheme-strip"><FileText size={17}/><span>Application journey: <b>{schemes.find(s=>s.id===selectedScheme)?.name||"Selected scheme"}</b></span></div>}<form className="form-grid" onSubmit={submit}>
     <label>Full Name<input name="name" value={form.name} onChange={update} required placeholder="Enter your full name"/></label>
     <label>Category<select name="category" value={form.category} onChange={update}><option>SC</option><option>ST</option><option>Other</option></select></label>
     <label>State<select name="state" value={form.state} onChange={update}><option>Madhya Pradesh</option><option>Rajasthan</option><option>Maharashtra</option><option>Uttar Pradesh</option></select></label>
@@ -130,9 +136,89 @@ function Eligibility(){
 
 function Recommendations(){
   const navigate=useNavigate(); const profile=JSON.parse(localStorage.getItem("udyamProfile")||"{}");
+  const selectedId=localStorage.getItem("udyamSelectedScheme")||"";
+  const selectedScheme=schemes.find(s=>s.id===selectedId);
   const eligible=profile.category==="SC" && profile.income!=="Above ₹5 Lakh";
   const ranked=useMemo(()=>schemes.map((s,i)=>({...s,match:eligible?[94,86,78][i]:[61,57,52][i]})),[eligible]);
-  return <main className="flow-page"><StepHeader step={3}/><div className="wide-card"><div className="results-heading"><div><span className="section-kicker">PERSONALIZED SHORTLIST</span><h1>Recommended schemes</h1><p>Based on the profile and support needs entered in this prototype.</p></div><div className="profile-pill"><CheckCircle2 size={16}/> {eligible?"Profile matches basic prototype rules":"Review eligibility details"}</div></div><div className="recommendation-list">{ranked.map(s=>{const Icon=s.icon;return <div className="result-card" key={s.id}><div className={`scheme-icon ${s.accent}`}><Icon size={24}/></div><div className="result-main"><div className="result-title"><h3>{s.name}</h3><span>{s.tag}</span></div><p>{s.description}</p><div className="result-meta"><b>{s.loan}</b><span>{s.interest}</span></div></div><div className="match-score"><strong>{s.match}%</strong><span>Match</span><Link to={`/schemes/${s.id}`}><ArrowRight size={18}/></Link></div></div>})}</div><div className="recommendation-actions"><button onClick={()=>navigate("/emi-calculator")} className="button button-primary">Estimate EMI <Calculator size={17}/></button><button onClick={()=>navigate("/partners")} className="button button-secondary">Find a Partner <MapPin size={17}/></button></div></div></main>;
+
+  const startApplication=(scheme)=>{
+    const existing=JSON.parse(localStorage.getItem("udyamApplications")||"[]");
+    const current=existing.find(a=>a.schemeId===scheme.id);
+    if(current){ navigate("/tracker"); return; }
+    const application={
+      id:`US-${new Date().getFullYear()}-${Math.floor(10000+Math.random()*90000)}`,
+      schemeId:scheme.id,
+      schemeName:scheme.name,
+      createdAt:new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}),
+      status:"Documents",
+      progress:25
+    };
+    localStorage.setItem("udyamApplications",JSON.stringify([application,...existing]));
+    navigate("/tracker");
+  };
+
+  return <main className="flow-page"><StepHeader step={3}/><div className="wide-card"><div className="results-heading"><div><span className="section-kicker">PERSONALIZED SHORTLIST</span><h1>Recommended schemes</h1><p>Based on the profile and support needs entered in this prototype.</p></div><div className="profile-pill"><CheckCircle2 size={16}/> {eligible?"Profile matches basic prototype rules":"Review eligibility details"}</div></div><div className="recommendation-list">{ranked.map(s=>{const Icon=s.icofunction Tracker(){
+  const [applications,setApplications]=useState([]);
+  const [selected,setSelected]=useState(null);
+
+  const load=()=>{
+    const saved=JSON.parse(localStorage.getItem("udyamApplications")||"[]");
+    setApplications(saved);
+    setSelected(prev=>prev&&saved.find(a=>a.id===prev.id)||saved[0]||null);
+  };
+
+  React.useEffect(()=>{load();},[]);
+
+  const stages=[
+    {key:"Profile",label:"Profile Created",icon:Users},
+    {key:"Eligibility",label:"Eligibility Checked",icon:CheckCircle2},
+    {key:"Documents",label:"Documents Ready",icon:FileText},
+    {key:"Submitted",label:"Application Submitted",icon:UploadCloud},
+    {key:"Verification",label:"Under Verification",icon:Clock3},
+    {key:"Decision",label:"Decision",icon:ClipboardCheck}
+  ];
+
+  const stageIndex={Profile:0,Eligibility:1,Documents:2,Submitted:3,Verification:4,Decision:5};
+  const currentIndex=selected ? (stageIndex[selected.status] ?? 2) : 0;
+
+  const advanceDemo=()=>{
+    if(!selected) return;
+    const next=Math.min(currentIndex+1,stages.length-1);
+    const updated={...selected,status:stages[next].key,progress:Math.round((next/(stages.length-1))*100)};
+    const all=applications.map(a=>a.id===selected.id?updated:a);
+    localStorage.setItem("udyamApplications",JSON.stringify(all));
+    setApplications(all); setSelected(updated);
+  };
+
+  const removeApplication=()=>{
+    if(!selected) return;
+    const all=applications.filter(a=>a.id!==selected.id);
+    localStorage.setItem("udyamApplications",JSON.stringify(all));
+    setApplications(all); setSelected(all[0]||null);
+  };
+
+  return <main className="tracker-page">
+    <div className="calculator-heading"><span className="section-kicker">APPLICATION TRACKER</span><h1>Track your application</h1><p>See where your UdyamSetu journey stands. This prototype stores demo application data only in your browser.</p></div>
+    {!applications.length ? <div className="tracker-empty"><div className="tracker-empty-icon"><ClipboardCheck size={30}/></div><h2>No application to track yet</h2><p>Choose a scheme, complete your profile and eligibility steps, then start an application from your recommendations.</p><Link to="/schemes" className="button button-primary">Explore Schemes <ArrowRight size={17}/></Link></div> :
+    <div className="tracker-layout">
+      <aside className="tracker-list">
+        <div className="tracker-list-head"><strong>My applications</strong><span>{applications.length}</span></div>
+        {applications.map(a=><button key={a.id} className={`tracker-list-item ${selected?.id===a.id?"active":""}`} onClick={()=>setSelected(a)}><div className="tracker-list-icon"><FileText size={17}/></div><div><b>{a.schemeName}</b><small>{a.id}</small></div><ChevronRight size={16}/></button>)}
+        <Link to="/schemes" className="tracker-add-link">+ Start another application</Link>
+      </aside>
+      {selected&&<section className="tracker-detail">
+        <div className="tracker-detail-top"><div><span className="section-kicker">{selected.status.toUpperCase()}</span><h2>{selected.schemeName}</h2><p>Application ID <b>{selected.id}</b> • Started {selected.createdAt}</p></div><span className="tracker-status-badge"><CircleDot size={14}/>{selected.status}</span></div>
+        <div className="tracker-progress"><div className="tracker-progress-head"><span>Application progress</span><b>{selected.progress}%</b></div><div className="tracker-progress-bar"><span style={{width:`${selected.progress}%`}}/></div></div>
+        <div className="tracker-timeline">{stages.map((stage,i)=>{const Icon=stage.icon; const done=i<=currentIndex; const current=i===currentIndex; return <div className={`tracker-stage ${done?"done":""} ${current?"current":""}`} key={stage.key}><div className="tracker-stage-icon">{done?<CheckCircle2 size={18}/>:<Icon size={18}/>}</div><div><b>{stage.label}</b><small>{done?(current?"Current stage":"Completed"):"Pending"}</small></div>{i<stages.length-1&&<div className={`tracker-stage-line ${i<currentIndex?"filled":""}`}/>}</div>})}</div>
+        <div className="tracker-info-grid"><div><span>Scheme</span><b>{selected.schemeName}</b></div><div><span>Started</span><b>{selected.createdAt}</b></div><div><span>Storage</span><b>Browser demo</b></div></div>
+        <div className="tracker-actions"><button className="button button-primary" onClick={advanceDemo} disabled={currentIndex>=stages.length-1}>{currentIndex>=stages.length-1?"Journey Complete":"Advance Demo Status"} <ArrowRight size={17}/></button><button className="button button-secondary" onClick={removeApplication}>Remove Demo</button></div>
+        <div className="tracker-note"><AlertCircle size={18}/><div><b>Prototype status</b><p>Application status is simulated for demonstration. It is not connected to a government application system and does not represent a real application status.</p></div></div>
+      </section>}
+    </div>}
+  </main>;
+}
+
+n;return <div className="result-card" key={s.id}><div className={`scheme-icon ${s.accent}`}><Icon size={24}/></div><div className="result-main"><div className="result-title"><h3>{s.name}</h3><span>{s.tag}</span></div><p>{s.description}</p><div className="result-meta"><b>{s.loan}</b><span>{s.interest}</span></div></div><div className="match-score"><strong>{s.match}%</strong><span>Match</span><button className="icon-action" onClick={()=>startApplication(s)} aria-label={`Start application for ${s.name}`}><ArrowRight size={18}/></button></div></div>})}</div><div className="recommendation-actions"><button onClick={()=>navigate("/emi-calculator")} className="button button-primary">Estimate EMI <Calculator size={17}/></button><button onClick={()=>navigate("/partners")} className="button button-secondary">Find a Partner <MapPin size={17}/></button></div>{selectedScheme&&<div className="tracker-hint"><ClipboardCheck size={17}/><span>You selected <b>{selectedScheme.name}</b>. Use the arrow on that scheme to start tracking its application.</span></div>}</div></main>;
 }
 
 function EMICalculator(){
@@ -168,7 +254,7 @@ function App(){
     <Route path="/" element={<Home/>}/><Route path="/schemes" element={<Schemes/>}/><Route path="/schemes/:id" element={<SchemeDetails/>}/>
     <Route path="/apply/:schemeId" element={<Apply schemeId={null}/>}/>
     <Route path="/profile" element={<Profile/>}/><Route path="/eligibility" element={<Eligibility/>}/><Route path="/recommendations" element={<Recommendations/>}/>
-    <Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
+    <Route path="/tracker" element={<Tracker/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
   </Routes></>;
 }
 export default App;
