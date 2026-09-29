@@ -144,7 +144,7 @@ function Recommendations(){
   const startApplication=(scheme)=>{
     const existing=JSON.parse(localStorage.getItem("udyamApplications")||"[]");
     const current=existing.find(a=>a.schemeId===scheme.id);
-    if(current){ navigate("/tracker"); return; }
+    if(current){ localStorage.setItem("udyamActiveApplication",current.id); navigate("/tracker"); return; }
     const application={
       id:`US-${new Date().getFullYear()}-${Math.floor(10000+Math.random()*90000)}`,
       schemeId:scheme.id,
@@ -154,6 +154,7 @@ function Recommendations(){
       progress:25
     };
     localStorage.setItem("udyamApplications",JSON.stringify([application,...existing]));
+    localStorage.setItem("udyamActiveApplication",application.id);
     navigate("/tracker");
   };
 
@@ -203,7 +204,7 @@ function Recommendations(){
     <div className="tracker-layout">
       <aside className="tracker-list">
         <div className="tracker-list-head"><strong>My applications</strong><span>{applications.length}</span></div>
-        {applications.map(a=><button key={a.id} className={`tracker-list-item ${selected?.id===a.id?"active":""}`} onClick={()=>setSelected(a)}><div className="tracker-list-icon"><FileText size={17}/></div><div><b>{a.schemeName}</b><small>{a.id}</small></div><ChevronRight size={16}/></button>)}
+        {applications.map(a=><button key={a.id} className={`tracker-list-item ${selected?.id===a.id?"active":""}`} onClick={()=>{setSelected(a);localStorage.setItem("udyamActiveApplication",a.id)}}><div className="tracker-list-icon"><FileText size={17}/></div><div><b>{a.schemeName}</b><small>{a.id}</small></div><ChevronRight size={16}/></button>)}
         <Link to="/schemes" className="tracker-add-link">+ Start another application</Link>
       </aside>
       {selected&&<section className="tracker-detail">
@@ -211,7 +212,7 @@ function Recommendations(){
         <div className="tracker-progress"><div className="tracker-progress-head"><span>Application progress</span><b>{selected.progress}%</b></div><div className="tracker-progress-bar"><span style={{width:`${selected.progress}%`}}/></div></div>
         <div className="tracker-timeline">{stages.map((stage,i)=>{const Icon=stage.icon; const done=i<=currentIndex; const current=i===currentIndex; return <div className={`tracker-stage ${done?"done":""} ${current?"current":""}`} key={stage.key}><div className="tracker-stage-icon">{done?<CheckCircle2 size={18}/>:<Icon size={18}/>}</div><div><b>{stage.label}</b><small>{done?(current?"Current stage":"Completed"):"Pending"}</small></div>{i<stages.length-1&&<div className={`tracker-stage-line ${i<currentIndex?"filled":""}`}/>}</div>})}</div>
         <div className="tracker-info-grid"><div><span>Scheme</span><b>{selected.schemeName}</b></div><div><span>Started</span><b>{selected.createdAt}</b></div><div><span>Storage</span><b>Browser demo</b></div></div>
-        <div className="tracker-actions"><button className="button button-primary" onClick={advanceDemo} disabled={currentIndex>=stages.length-1}>{currentIndex>=stages.length-1?"Journey Complete":"Advance Demo Status"} <ArrowRight size={17}/></button><button className="button button-secondary" onClick={removeApplication}>Remove Demo</button></div>
+        <div className="tracker-actions"><Link to="/documents" className="button button-primary">{selected.status==="Documents"?"Open Document Checklist":"View Document Checklist"} <ArrowRight size={17}/></Link><button className="button button-secondary" onClick={advanceDemo} disabled={currentIndex>=stages.length-1}>{currentIndex>=stages.length-1?"Journey Complete":"Advance Demo Status"} <ArrowRight size={17}/></button><button className="button button-secondary" onClick={removeApplication}>Remove Demo</button></div>
         <div className="tracker-note"><AlertCircle size={18}/><div><b>Prototype status</b><p>Application status is simulated for demonstration. It is not connected to a government application system and does not represent a real application status.</p></div></div>
       </section>}
     </div>}
@@ -221,6 +222,37 @@ function Recommendations(){
 n;return <div className="result-card" key={s.id}><div className={`scheme-icon ${s.accent}`}><Icon size={24}/></div><div className="result-main"><div className="result-title"><h3>{s.name}</h3><span>{s.tag}</span></div><p>{s.description}</p><div className="result-meta"><b>{s.loan}</b><span>{s.interest}</span></div></div><div className="match-score"><strong>{s.match}%</strong><span>Match</span><button className="icon-action" onClick={()=>startApplication(s)} aria-label={`Start application for ${s.name}`}><ArrowRight size={18}/></button></div></div>})}</div><div className="recommendation-actions"><button onClick={()=>navigate("/emi-calculator")} className="button button-primary">Estimate EMI <Calculator size={17}/></button><button onClick={()=>navigate("/partners")} className="button button-secondary">Find a Partner <MapPin size={17}/></button></div>{selectedScheme&&<div className="tracker-hint"><ClipboardCheck size={17}/><span>You selected <b>{selectedScheme.name}</b>. Use the arrow on that scheme to start tracking its application.</span></div>}</div></main>;
 }
 
+function Documents(){
+  const applications=JSON.parse(localStorage.getItem("udyamApplications")||"[]");
+  const selectedId=localStorage.getItem("udyamActiveApplication")||applications[0]?.id||"";
+  const selected=applications.find(a=>a.id===selectedId)||applications[0];
+  const defaultDocs=[
+    {id:"aadhaar",name:"Aadhaar Card",type:"Identity Proof",required:true},
+    {id:"pan",name:"PAN Card",type:"Identity / Financial",required:true},
+    {id:"income",name:"Income Certificate",type:"Income Proof",required:true},
+    {id:"bank",name:"Bank Account / Passbook",type:"Banking",required:true},
+    {id:"address",name:"Address Proof",type:"Address",required:true},
+    {id:"business",name:"Business / Enterprise Proof",type:"Business",required:false}
+  ];
+  const storageKey=selected?"udyamDocuments_"+selected.id:"udyamDocuments_demo";
+  const [docs,setDocs]=useState(()=>JSON.parse(localStorage.getItem(storageKey)||"null")||defaultDocs.map(d=>({...d,done:false})));
+  const toggle=id=>{const next=docs.map(d=>d.id===id?{...d,done:!d.done}:d);setDocs(next);localStorage.setItem(storageKey,JSON.stringify(next));};
+  const completed=docs.filter(d=>d.done).length;
+  const required=docs.filter(d=>d.required).length;
+  const requiredDone=docs.filter(d=>d.required&&d.done).length;
+  const markAll=()=>{const next=docs.map(d=>({...d,done:true}));setDocs(next);localStorage.setItem(storageKey,JSON.stringify(next));};
+  return <main className="documents-page">
+    <div className="calculator-heading"><span className="section-kicker">DOCUMENT CHECKLIST</span><h1>Get your documents ready</h1><p>Prepare the documents commonly needed for the selected application. This checklist is a prototype and should be verified against the official scheme requirements.</p></div>
+    {!selected?<div className="tracker-empty"><div className="tracker-empty-icon"><FileText size={30}/></div><h2>No application selected</h2><p>Start an application first so UdyamSetu can keep a separate document checklist for it.</p><Link to="/schemes" className="button button-primary">Explore Schemes <ArrowRight size={17}/></Link></div>:
+    <div className="documents-card">
+      <div className="documents-top"><div><span className="section-kicker">{selected.schemeName}</span><h2>Application {selected.id}</h2></div><Link to="/tracker" className="button button-secondary">Back to Tracker</Link></div>
+      <div className="documents-progress"><div><span>Documents ready</span><b>{completed}/{docs.length}</b></div><div className="documents-progress-bar"><span style={{width:(Math.round((completed/docs.length)*100))+"%"}}/></div><small>{requiredDone}/{required} required documents completed</small></div>
+      <div className="document-list">{docs.map(doc=><div className={"document-row "+(doc.done?"completed":"")} key={doc.id}><button className="document-check" onClick={()=>toggle(doc.id)} aria-label={doc.done?"Mark "+doc.name+" pending":"Mark "+doc.name+" complete"}>{doc.done?<CheckCircle2 size={20}/>:<CircleDot size={20}/>}</button><div className="document-copy"><b>{doc.name}</b><span>{doc.type}{doc.required?" • Required":" • Recommended"}</span></div><span className={"document-status "+(doc.done?"ready":"")}>{doc.done?"Ready":"Pending"}</span></div>)}</div>
+      <div className="documents-actions"><button className="button button-secondary" onClick={markAll}>Mark all ready</button><Link to="/tracker" className={"button button-primary "+(requiredDone<required?"disabled-link":"")}>{requiredDone===required?"Continue to Tracker":"Save & Continue"} <ArrowRight size={17}/></Link></div>
+      <div className="tracker-note"><AlertCircle size={18}/><div><b>Prototype reminder</b><p>Do not upload real identity documents to this demo. In a production version, documents should use secure authenticated storage and official verification.</p></div></div>
+    </div>}
+  </main>;
+}
 function EMICalculator(){
   const [amount,setAmount]=useState(1000000),[rate,setRate]=useState(7),[years,setYears]=useState(5); const r=rate/12/100,n=years*12;
   const emi=r===0?amount/n:(amount*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1); const total=emi*n,interest=total-amount;
@@ -254,7 +286,7 @@ function App(){
     <Route path="/" element={<Home/>}/><Route path="/schemes" element={<Schemes/>}/><Route path="/schemes/:id" element={<SchemeDetails/>}/>
     <Route path="/apply/:schemeId" element={<Apply schemeId={null}/>}/>
     <Route path="/profile" element={<Profile/>}/><Route path="/eligibility" element={<Eligibility/>}/><Route path="/recommendations" element={<Recommendations/>}/>
-    <Route path="/tracker" element={<Tracker/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
+    <Route path="/tracker" element={<Tracker/>}/><Route path="/documents" element={<Documents/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
   </Routes></>;
 }
 export default App;
