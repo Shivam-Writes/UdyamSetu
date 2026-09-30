@@ -1008,3 +1008,92 @@ input:focus-visible,select:focus-visible{outline:3px solid rgba(76,61,240,.3);ou
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Final all-screen-size hardening */
+html{overflow-x:hidden}
+body{overflow-x:hidden}
+img,svg,video,canvas{max-width:100%;height:auto}
+button,a,input,select,textarea{min-height:0}
+main,.section,.page-section,.flow-page,.detail-page,.calculator-page,.partners-page,.dashboard-page,.documents-page,.auth-page,.placeholder{width:100%;max-width:100%}
+.section,.flow-page,.detail-page,.calculator-page,.partners-page,.dashboard-page,.documents-page{padding-left:clamp(16px,4vw,30px);padding-right:clamp(16px,4vw,30px)}
+.navbar{padding-left:clamp(14px,5vw,72px);padding-right:clamp(14px,5vw,72px)}
+.nav-links{min-width:0}
+.nav-actions{flex-shrink:0}
+.hero,.stats-section,.feature-section{width:100%;max-width:1240px}
+.hero-visual,.dashboard-card,.flow-card,.wide-card,.calculator-card,.emi-result,.detail-content,.detail-side,.partner-list,.partner-map,.documents-card,.auth-card{min-width:0}
+.hero h1,.section-heading h2,.dashboard-heading h1,.detail-hero h1,.calculator-heading h1,.flow-card h1,.wide-card h1,.placeholder h1{overflow-wrap:anywhere}
+.form-grid input,.form-grid select,.auth-card input,.search-field input,.scheme-search input{min-width:0}
+.result-card,.partner-card,.document-row,.dashboard-application-list button,.apply-step{min-width:0}
+.result-main,.document-copy,.dashboard-panel,.detail-content{min-width:0}
+.result-title h3,.scheme-card h3,.partner-card h3,.document-copy b{overflow-wrap:anywhere}
+.leaflet-container{width:100%;max-width:100%;z-index:0}
+.leaflet-popup-content{max-width:260px;word-break:break-word}
+.compare-modal-backdrop{overflow:auto}
+.compare-modal{max-width:100%;min-width:0}
+@media(max-width:900px){
+  .hero{padding-top:clamp(38px,8vw,70px);padding-bottom:clamp(40px,8vw,65px)}
+  .hero-visual{min-height:0}
+  .dashboard-card{padding:clamp(18px,4vw,27px)}
+  .stats-section{padding-bottom:55px}
+  .feature-section{padding-bottom:55px}
+  .partner-layout,.calculator-grid,.detail-grid,.dashboard-grid-main{grid-template-columns:1fr}
+  .detail-hero{grid-template-columns:1fr}
+  .detail-actions{width:100%}
+  .detail-actions .button{flex:1}
+  .form-actions{flex-wrap:wrap}
+  .form-actions .button{min-width:140px}
+  .dashboard-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .navbar{align-items:center}
+  .nav-links{scrollbar-width:none}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{font-size:12px}
+  .hero h1{font-size:clamp(30px,8.5vw,38px)}
+  .hero p{font-size:14px}
+  .trust-row{gap:10px}
+  .dashboard-grid,.dashboard-meta,.emi-breakdown{grid-template-columns:1fr}
+  .results-heading,.section-heading{margin-bottom:20px}
+  .result-card{display:grid;grid-template-columns:auto 1fr;gap:10px}
+  .result-card>.match-score{grid-column:2;justify-self:start;margin-left:0;align-items:flex-start}
+  .result-meta{flex-wrap:wrap;gap:8px}
+  .detail-hero{padding:20px}
+  .detail-content,.detail-side{padding:19px}
+  .calculator-card,.emi-result{padding:20px}
+  .calculator-heading h1{font-size:clamp(28px,8vw,34px)}
+  .partner-map{height:min(60vh,360px)}
+  .documents-top,.dashboard-heading{gap:14px}
+  .dashboard-stat-grid{grid-template-columns:1fr}
+  .dashboard-quick-grid{grid-template-columns:1fr}
+  .dashboard-application-list button{grid-template-columns:minmax(0,1fr) auto}
+  .apply-step{padding:12px}
+  .auth-page{padding:30px 16px}
+  .auth-card{padding:24px 18px}
+  .placeholder{padding:75px 18px}
+  .placeholder h1{font-size:clamp(30px,8vw,42px)}
+  .footer{padding:30px 18px}
+}
+@media(max-width:400px){
+  .nav-links{gap:14px}
+  .nav-links a{font-size:11px}
+  .brand-name{font-size:16px}
+  .language-toggle span{padding:5px 5px}
+  .hero-actions .button,.detail-actions .button,.form-actions .button,.dashboard-actions .button{width:100%}
+  .hero-actions{gap:9px}
+  .dashboard-panel{padding:16px}
+  .scheme-card{padding:15px}
+  .compare-dock{width:calc(100% - 20px);padding:12px}
+  .compare-dock-actions{flex-wrap:wrap}
+  .compare-dock-actions .button{min-width:0}
+}
+@media(max-width:340px){
+  .navbar{padding-left:10px;padding-right:10px}
+  .nav-links{gap:11px}
+  .nav-links a{font-size:10px}
+  .brand-mark{width:32px;height:32px}
+  .brand-name{font-size:15px}
+  .language-toggle{font-size:7px!important}
+  .hero h1{font-size:28px}
+  .section-heading h2{font-size:22px}
+  .button{padding:11px 12px;font-size:12px}
+}
