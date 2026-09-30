@@ -912,3 +912,9 @@ img, svg {
 .scheme-empty p{max-width:470px;margin:0 auto 20px;color:#7d8597;font-size:11px;line-height:1.6}
 @media(max-width:1050px){.scheme-filters{grid-template-columns:1fr 1fr 1fr}.scheme-search{grid-column:1/-1}.filter-clear{width:100%}}
 @media(max-width:600px){.scheme-filters{grid-template-columns:1fr;margin-top:18px;padding:13px;border-radius:15px}.scheme-search{grid-column:auto}.scheme-filters label,.scheme-filters select,.filter-clear{width:100%}.filter-results-bar{margin-bottom:12px}.scheme-empty{padding:38px 18px}}
+
+/* Recommendation match reasons */
+.match-reasons{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 13px}
+.match-reasons span{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#f3f1ff;color:#5a50a8;font-size:8px;font-weight:800}
+.match-reasons svg{flex:none}
+@media(max-width:600px){.match-reasons{margin-top:9px}.match-reasons span{font-size:8px}}
