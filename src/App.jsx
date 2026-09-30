@@ -9,6 +9,14 @@ import {
   LogIn, Building2, ClipboardCheck, Clock3, UploadCloud, CircleDot, AlertCircle
 } from "lucide-react";
 
+const translations={
+  en:{home:"Home",schemes:"Schemes",calculator:"EMI Calculator",partners:"Partners",compare:"Compare",tracker:"Tracker",about:"About",login:"Login",getStarted:"Get Started",heroEyebrow:"{t("heroEyebrow")}",heroTitle:"Find the Right Government Scheme for Your Growth.",heroText:"{t("heroText")}",explore:"Explore Schemes",popular:"Popular Schemes",viewAll:"View all schemes",discover:"DISCOVER SUPPORT",schemeDiscovery:"SCHEME DISCOVERY",exploreGov:"Explore Government Schemes",search:"Search schemes...",category:"Category",support:"Support Type",beneficiary:"Beneficiary",all:"All",clear:"Clear filters",found:"schemes found",noSchemes:"No schemes found",noSchemesText:"Try a different search term or clear the filters to view all available schemes.",viewDetails:"View details",compareAction:"Compare"},
+  hi:{home:"होम",schemes:"योजनाएँ",calculator:"EMI कैलकुलेटर",partners:"साझेदार",compare:"तुलना",tracker:"ट्रैकर",about:"हमारे बारे में",login:"लॉगिन",getStarted:"शुरू करें",heroEyebrow:"उद्यम शुरू करने वालों के लिए",heroTitle:"अपने विकास के लिए सही सरकारी योजना खोजें।",heroText:"उपयुक्त सरकारी योजनाएँ खोजें, पात्रता समझें, EMI का अनुमान लगाएँ और सही चैनल पार्टनर खोजें — सब एक ही जगह।",explore:"योजनाएँ देखें",popular:"लोकप्रिय योजनाएँ",viewAll:"सभी योजनाएँ देखें",discover:"सहायता खोजें",schemeDiscovery:"योजना खोज",exploreGov:"सरकारी योजनाएँ देखें",search:"योजनाएँ खोजें...",category:"श्रेणी",support:"सहायता प्रकार",beneficiary:"लाभार्थी",all:"सभी",clear:"फ़िल्टर साफ़ करें",found:"योजनाएँ मिलीं",noSchemes:"कोई योजना नहीं मिली",noSchemesText:"कोई दूसरा शब्द आज़माएँ या सभी योजनाएँ देखने के लिए फ़िल्टर साफ़ करें।",viewDetails:"विवरण देखें",compareAction:"तुलना करें"}
+};
+const LanguageContext=React.createContext(null);
+function LanguageProvider({children}){const [language,setLanguage]=useState(()=>localStorage.getItem("udyamLanguage")||"en");const toggle=()=>setLanguage(prev=>{const next=prev==="en"?"hi":"en";localStorage.setItem("udyamLanguage",next);return next;});const t=key=>translations[language][key]||translations.en[key]||key;return <LanguageContext.Provider value={{language,t,toggle}}>{children}</LanguageContext.Provider>;}
+function useLanguage(){return React.useContext(LanguageContext);}
+function LanguageToggle(){const {language,toggle}=useLanguage();return <button type="button" className="language-toggle" onClick={toggle} aria-label="Change language"><span className={language==="en"?"active":""}>EN</span><span className={language==="hi"?"active":""}>हिंदी</span></button>;}
 const schemes = [
   {id:"pm-suraj",name:"PM-SURAJ",tag:"SC Entrepreneurs",category:"SC/ST",supportType:"Loan",beneficiary:"SC/ST",accent:"violet",icon:Landmark,loan:"Up to ₹25 Lakh",interest:"Concessional",description:"Explore concessional financial support designed for eligible SC beneficiaries and entrepreneurs.",eligibility:"SC beneficiary profile and scheme-specific conditions apply.",benefits:["Concessional financial support","Guidance through the application journey","Partner/channel discovery"]},
   {id:"nsfdc",name:"NSFDC Loan Support",tag:"Financial Support",category:"SC/ST",supportType:"Loan",beneficiary:"SC/ST",accent:"blue",icon:WalletCards,loan:"Scheme dependent",interest:"Concessional",description:"Explore finance options associated with NSFDC and understand the relevant eligibility route.",eligibility:"Eligibility and loan limits depend on the applicable NSFDC scheme.",benefits:["Concessional finance options","Multiple support routes","Application guidance"]},
@@ -28,12 +36,13 @@ const partners = [
 ];
 
 function Navbar(){
+  const {t}=useLanguage();
   return <header className="navbar">
     <Link to="/" className="brand"><div className="brand-mark">U</div><div><div className="brand-name">UdyamSetu</div><div className="brand-subtitle">Sarkari Yojana se Aapke Udyam Tak</div></div></Link>
     <nav className="nav-links">
-      <NavLink to="/" end>Home</NavLink><NavLink to="/schemes">Schemes</NavLink><NavLink to="/emi-calculator">EMI Calculator</NavLink><NavLink to="/partners">Partners</NavLink><NavLink to="/compare">Compare</NavLink><NavLink to="/tracker">Tracker</NavLink><NavLink to="/about">About</NavLink>
+      <NavLink to="/" end>{t("home")}</NavLink><NavLink to="/schemes">{t("schemes")}</NavLink><NavLink to="/emi-calculator">{t("calculator")}</NavLink><NavLink to="/partners">{t("partners")}</NavLink><NavLink to="/compare">{t("compare")}</NavLink><NavLink to="/tracker">{t("tracker")}</NavLink><NavLink to="/about">{t("about")}</NavLink>
     </nav>
-    <div className="nav-actions"><button className="search-button" aria-label="Search"><Search size={18}/></button><Link className="login-link" to="/login">Login</Link><Link className="button button-primary button-small" to="/schemes">Get Started</Link></div>
+    <div className="nav-actions"><LanguageToggle/><button className="search-button" aria-label="Search"><Search size={18}/></button><Link className="login-link" to="/login">{t("login")}</Link><Link className="button button-primary button-small" to="/schemes">{t("getStarted")}</Link></div>
   </header>;
 }
 
@@ -42,12 +51,13 @@ function Footer(){
 }
 
 function Home(){
+  const {t}=useLanguage();
   return <>
     <section className="hero">
       <div className="hero-copy"><div className="eyebrow"><Sparkles size={16}/> Built for aspiring entrepreneurs</div>
-        <h1>Find the Right <span>Government Scheme</span> for Your Growth.</h1>
+        <h1>{t("heroTitle")}</h1>
         <p>Discover relevant government schemes, understand eligibility, estimate EMI and find the right channel partner — all in one place.</p>
-        <div className="hero-actions"><Link to="/schemes" className="button button-primary">Explore Schemes <ArrowRight size={18}/></Link><Link to="/login" className="button button-secondary"><LogIn size={17}/> Login</Link></div>
+        <div className="hero-actions"><Link to="/schemes" className="button button-primary">{t("explore")} <ArrowRight size={18}/></Link><Link to="/login" className="button button-secondary"><LogIn size={17}/> Login</Link></div>
         <div className="trust-row"><span><ShieldCheck size={17}/> Scheme-focused guidance</span><span><CheckCircle2 size={17}/> Simple application journey</span></div>
       </div>
       <div className="hero-visual"><div className="visual-glow glow-one"/><div className="visual-glow glow-two"/><div className="dashboard-card">
@@ -58,16 +68,17 @@ function Home(){
       </div></div>
     </section>
     <section className="stats-section"><div className="stat"><strong>50+</strong><span>Government Schemes</span></div><div className="stat"><strong>SC Focused</strong><span>Support & Discovery</span></div><div className="stat"><strong>End-to-End</strong><span>Application Guidance</span></div><div className="stat"><strong>100+</strong><span>Channel Partners</span></div></section>
-    <section className="section"><div className="section-heading"><div><span className="section-kicker">DISCOVER SUPPORT</span><h2>Popular Schemes</h2><p>Browse schemes and open each one for its complete detail page.</p></div><Link to="/schemes" className="text-link">View all schemes <ArrowRight size={17}/></Link></div><div className="scheme-grid">{schemes.slice(0,3).map((s,index)=><SchemeCard key={s.id} scheme={s} index={index}/>)}</div></section>
+    <section className="section"><div className="section-heading"><div><span className="section-kicker">{t("discover")}</span><h2>{t("popular")}</h2><p>Browse schemes and open each one for its complete detail page.</p></div><Link to="/schemes" className="text-link">{t("viewAll")} <ArrowRight size={17}/></Link></div><div className="scheme-grid">{schemes.slice(0,3).map((s,index)=><SchemeCard key={s.id} scheme={s} index={index}/>)}</div></section>
     <section className="feature-section"><Feature icon={<Sparkles size={24}/>} title="Discover schemes" text="Browse and understand government support before sharing any personal information."/><Feature icon={<Calculator size={24}/>} title="Understand the numbers" text="Estimate monthly EMI and repayment for your planned loan amount."/><Feature icon={<MapPin size={24}/>} title="Find the right partner" text="Locate a relevant channel partner for the next stage of the journey."/></section>
     <Footer/>
   </>;
 }
 
 function Feature({icon,title,text}){return <div className="feature-card"><div className="feature-icon">{icon}</div><div><h3>{title}</h3><p>{text}</p></div></div>;}
-function SchemeCard({scheme,index}){const Icon=scheme.icon;return <article className="scheme-card" data-scheme-index={index+1}><div className="card-top"><div className={`scheme-icon ${scheme.accent}`}><Icon size={23}/></div><span className="scheme-tag">{scheme.tag}</span></div><h3>{scheme.name}</h3><p>{scheme.description}</p><div className="scheme-card-actions"><Link to={`/schemes/${scheme.id}`} className="card-link">View details <ArrowRight size={16}/></Link><Link to={`/compare?add=${scheme.id}`} className="compare-link">Compare</Link></div></article>;}
+function SchemeCard({scheme,index}){const {t}=useLanguage(); const Icon=scheme.icon;return <article className="scheme-card" data-scheme-index={index+1}><div className="card-top"><div className={`scheme-icon ${scheme.accent}`}><Icon size={23}/></div><span className="scheme-tag">{scheme.tag}</span></div><h3>{scheme.name}</h3><p>{scheme.description}</p><div className="scheme-card-actions"><Link to={`/schemes/${scheme.id}`} className="card-link">{t("viewDetails")} <ArrowRight size={16}/></Link><Link to={`/compare?add=${scheme.id}`} className="compare-link">{t("compareAction")}</Link></div></article>;}
 
 function Schemes(){
+  const {t}=useLanguage();
   const [query,setQuery]=useState("");
   const [category,setCategory]=useState("All");
   const [support,setSupport]=useState("All");
@@ -88,20 +99,20 @@ function Schemes(){
 
   return <main className="section page-section">
     <div className="section-heading">
-      <div><span className="section-kicker">SCHEME DISCOVERY</span><h2>Explore Government Schemes <span className="scheme-count">{schemes.length} schemes</span></h2><p>Search and filter schemes by support type, category and beneficiary.</p></div>
+      <div><span className="section-kicker">{t("schemeDiscovery")}</span><h2>{t("exploreGov")} <span className="scheme-count">{schemes.length} schemes</span></h2><p>Search and filter schemes by support type, category and beneficiary.</p></div>
     </div>
     <div className="scheme-filters">
       <div className="scheme-search">
         <Search size={18}/>
-        <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search schemes..." aria-label="Search schemes"/>
+        <input value={query} onChange={e=>setQuery(e.target.value)} placeholder={t("search")} aria-label="Search schemes"/>
       </div>
-      <label>Category<select value={category} onChange={e=>setCategory(e.target.value)}><option>All</option><option>SC/ST</option><option>Business Loan</option><option>Micro Business</option><option>Artisans</option><option>Credit Guarantee</option><option>Traditional Industries</option></select></label>
-      <label>Support Type<select value={support} onChange={e=>setSupport(e.target.value)}><option>All</option><option>Loan</option><option>Subsidy</option><option>Credit Guarantee</option><option>Support</option></select></label>
-      <label>Beneficiary<select value={beneficiary} onChange={e=>setBeneficiary(e.target.value)}><option>All</option><option>SC/ST</option><option>Women/SC/ST</option><option>Micro Enterprises</option><option>Artisans</option><option>Traditional Industries</option></select></label>
-      <button type="button" className="filter-clear" onClick={clearFilters}>Clear filters</button>
+      <label>{t("category")}<select value={category} onChange={e=>setCategory(e.target.value)}><option>All</option><option>SC/ST</option><option>Business Loan</option><option>Micro Business</option><option>Artisans</option><option>Credit Guarantee</option><option>Traditional Industries</option></select></label>
+      <label>{t("support")}<select value={support} onChange={e=>setSupport(e.target.value)}><option>All</option><option>Loan</option><option>Subsidy</option><option>Credit Guarantee</option><option>Support</option></select></label>
+      <label>{t("beneficiary")}<select value={beneficiary} onChange={e=>setBeneficiary(e.target.value)}><option>All</option><option>SC/ST</option><option>Women/SC/ST</option><option>Micro Enterprises</option><option>Artisans</option><option>Traditional Industries</option></select></label>
+      <button type="button" className="filter-clear" onClick={clearFilters}>{t("clear")}</button>
     </div>
     <div className="filter-results-bar"><span><b>{filtered.length}</b> {filtered.length===1?"scheme":"schemes"} found</span>{(query||category!=="All"||support!=="All"||beneficiary!=="All")&&<button type="button" onClick={clearFilters}>Reset filters</button>}</div>
-    {filtered.length>0?<div className="scheme-grid">{filtered.map(s=><SchemeCard key={s.id} scheme={s}/>)}</div>:<div className="scheme-empty"><div className="scheme-empty-icon"><Search size={24}/></div><h3>No schemes found</h3><p>Try a different search term or clear the filters to view all available schemes.</p><button type="button" className="button button-primary" onClick={clearFilters}>View all schemes</button></div>}
+    {filtered.length>0?<div className="scheme-grid">{filtered.map(s=><SchemeCard key={s.id} scheme={s}/>)}</div>:<div className="scheme-empty"><div className="scheme-empty-icon"><Search size={24}/></div><h3>{t("noSchemes")}</h3><p>{t("noSchemesText")}</p><button type="button" className="button button-primary" onClick={clearFilters}>{t("viewAll")}</button></div>}
     <div className="browse-note"><CircleHelp size={17}/><span>Personal details are requested only after you choose a scheme and click Apply.</span></div>
   </main>;
 }
@@ -398,11 +409,11 @@ function Login(){
 }
 
 function App(){
-  return <><Navbar/><Routes>
+  return <LanguageProvider><Navbar/><Routes>
     <Route path="/" element={<Home/>}/><Route path="/schemes" element={<Schemes/>}/><Route path="/schemes/:id" element={<SchemeDetails/>}/>
     <Route path="/apply/:schemeId" element={<Apply schemeId={null}/>}/>
     <Route path="/profile" element={<Profile/>}/><Route path="/eligibility" element={<Eligibility/>}/><Route path="/recommendations" element={<Recommendations/>}/>
     <Route path="/compare" element={<Compare/>}/><Route path="/tracker" element={<Tracker/>}/><Route path="/documents" element={<Documents/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
-  </Routes></>;
+  </Routes></LanguageProvider>;
 }
 export default App;
