@@ -10,15 +10,15 @@ import {
 } from "lucide-react";
 
 const schemes = [
-  {id:"pm-suraj",name:"PM-SURAJ",tag:"SC Entrepreneurs",accent:"violet",icon:Landmark,loan:"Up to ₹25 Lakh",interest:"Concessional",description:"Explore concessional financial support designed for eligible SC beneficiaries and entrepreneurs.",eligibility:"SC beneficiary profile and scheme-specific conditions apply.",benefits:["Concessional financial support","Guidance through the application journey","Partner/channel discovery"]},
-  {id:"nsfdc",name:"NSFDC Loan Support",tag:"Financial Support",accent:"blue",icon:WalletCards,loan:"Scheme dependent",interest:"Concessional",description:"Explore finance options associated with NSFDC and understand the relevant eligibility route.",eligibility:"Eligibility and loan limits depend on the applicable NSFDC scheme.",benefits:["Concessional finance options","Multiple support routes","Application guidance"]},
-  {id:"stand-up-india",name:"Stand Up India",tag:"Business Loan",accent:"amber",icon:Sparkles,loan:"₹10 Lakh – ₹1 Crore",interest:"Bank based",description:"Explore bank-linked support for eligible SC/ST and women entrepreneurs.",eligibility:"Scheme-specific eligibility and bank appraisal apply.",benefits:["Bank-linked credit","Greenfield enterprise support","Guidance on next steps"]},
-  {id:"pmegp",name:"PMEGP",tag:"Micro Enterprise",accent:"violet",icon:Building2,loan:"Up to ₹50 Lakh",interest:"Credit-linked subsidy",description:"Support for setting up new micro-enterprises in the non-farm sector through credit-linked subsidy.",eligibility:"New micro-enterprise applicants meeting PMEGP conditions.",benefits:["Credit-linked subsidy","Support for new enterprises","Urban and rural coverage"]},
-  {id:"mudra",name:"Pradhan Mantri MUDRA Yojana",tag:"Micro Business",accent:"blue",icon:WalletCards,loan:"Up to ₹20 Lakh",interest:"Bank based",description:"Credit support for eligible micro enterprises and small business activities through participating lenders.",eligibility:"Eligible micro enterprises and borrowers meeting lender and scheme conditions.",benefits:["Shishu, Kishor, Tarun and Tarun Plus categories","Business credit","Wide lender network"]},
-  {id:"pm-vishwakarma",name:"PM Vishwakarma",tag:"Artisans & Craftspeople",accent:"amber",icon:Sparkles,loan:"Up to ₹3 Lakh",interest:"Concessional",description:"Integrated support for eligible traditional artisans and craftspeople, including skill, toolkit and credit support.",eligibility:"Eligible artisans in notified traditional trades, subject to scheme conditions.",benefits:["Skill training","Toolkit support","Concessional credit"]},
-  {id:"cgtmse",name:"CGTMSE",tag:"Credit Guarantee",accent:"blue",icon:ShieldCheck,loan:"Credit guarantee support",interest:"Lender based",description:"Credit guarantee support helps eligible micro and small enterprises access loans without collateral or third-party guarantee, subject to scheme rules.",eligibility:"Eligible new or existing micro and small enterprises through member lending institutions.",benefits:["Collateral-free credit support","Guarantee coverage","Working and investment capital access"]},
-  {id:"sfurti",name:"SFURTI",tag:"Traditional Industries",accent:"amber",icon:Users,loan:"Project-based support",interest:"Government support",description:"Supports traditional industry clusters with technology, marketing and skill development assistance.",eligibility:"Eligible traditional industry clusters and implementing agencies under scheme guidelines.",benefits:["Cluster development","Technology support","Marketing and skill development"]},
-  {id:"nssh",name:"National SC-ST Hub",tag:"SC/ST Entrepreneurs",accent:"violet",icon:Users,loan:"Support based",interest:"Not a standard loan",description:"Support and facilitation for SC/ST entrepreneurs to improve participation in government procurement and enterprise development.",eligibility:"SC/ST entrepreneurs and eligible enterprises under programme guidelines.",benefits:["Procurement support","Capacity building","Market and tender assistance"]}
+  {id:"pm-suraj",name:"PM-SURAJ",tag:"SC Entrepreneurs",category:"SC/ST",supportType:"Loan",beneficiary:"SC/ST",accent:"violet",icon:Landmark,loan:"Up to ₹25 Lakh",interest:"Concessional",description:"Explore concessional financial support designed for eligible SC beneficiaries and entrepreneurs.",eligibility:"SC beneficiary profile and scheme-specific conditions apply.",benefits:["Concessional financial support","Guidance through the application journey","Partner/channel discovery"]},
+  {id:"nsfdc",name:"NSFDC Loan Support",tag:"Financial Support",category:"SC/ST",supportType:"Loan",beneficiary:"SC/ST",accent:"blue",icon:WalletCards,loan:"Scheme dependent",interest:"Concessional",description:"Explore finance options associated with NSFDC and understand the relevant eligibility route.",eligibility:"Eligibility and loan limits depend on the applicable NSFDC scheme.",benefits:["Concessional finance options","Multiple support routes","Application guidance"]},
+  {id:"stand-up-india",name:"Stand Up India",tag:"Business Loan",category:"Business Loan",supportType:"Loan",beneficiary:"Women/SC/ST",accent:"amber",icon:Sparkles,loan:"₹10 Lakh – ₹1 Crore",interest:"Bank based",description:"Explore bank-linked support for eligible SC/ST and women entrepreneurs.",eligibility:"Scheme-specific eligibility and bank appraisal apply.",benefits:["Bank-linked credit","Greenfield enterprise support","Guidance on next steps"]},
+  {id:"pmegp",name:"PMEGP",tag:"Micro Enterprise",category:"Micro Business",supportType:"Subsidy",beneficiary:"Micro Enterprises",accent:"violet",icon:Building2,loan:"Up to ₹50 Lakh",interest:"Credit-linked subsidy",description:"Support for setting up new micro-enterprises in the non-farm sector through credit-linked subsidy.",eligibility:"New micro-enterprise applicants meeting PMEGP conditions.",benefits:["Credit-linked subsidy","Support for new enterprises","Urban and rural coverage"]},
+  {id:"mudra",name:"Pradhan Mantri MUDRA Yojana",tag:"Micro Business",category:"Micro Business",supportType:"Loan",beneficiary:"Micro Enterprises",accent:"blue",icon:WalletCards,loan:"Up to ₹20 Lakh",interest:"Bank based",description:"Credit support for eligible micro enterprises and small business activities through participating lenders.",eligibility:"Eligible micro enterprises and borrowers meeting lender and scheme conditions.",benefits:["Shishu, Kishor, Tarun and Tarun Plus categories","Business credit","Wide lender network"]},
+  {id:"pm-vishwakarma",name:"PM Vishwakarma",tag:"Artisans & Craftspeople",category:"Artisans",supportType:"Loan",beneficiary:"Artisans",accent:"amber",icon:Sparkles,loan:"Up to ₹3 Lakh",interest:"Concessional",description:"Integrated support for eligible traditional artisans and craftspeople, including skill, toolkit and credit support.",eligibility:"Eligible artisans in notified traditional trades, subject to scheme conditions.",benefits:["Skill training","Toolkit support","Concessional credit"]},
+  {id:"cgtmse",name:"CGTMSE",tag:"Credit Guarantee",category:"Credit Guarantee",supportType:"Credit Guarantee",beneficiary:"Micro Enterprises",accent:"blue",icon:ShieldCheck,loan:"Credit guarantee support",interest:"Lender based",description:"Credit guarantee support helps eligible micro and small enterprises access loans without collateral or third-party guarantee, subject to scheme rules.",eligibility:"Eligible new or existing micro and small enterprises through member lending institutions.",benefits:["Collateral-free credit support","Guarantee coverage","Working and investment capital access"]},
+  {id:"sfurti",name:"SFURTI",tag:"Traditional Industries",category:"Traditional Industries",supportType:"Support",beneficiary:"Traditional Industries",accent:"amber",icon:Users,loan:"Project-based support",interest:"Government support",description:"Supports traditional industry clusters with technology, marketing and skill development assistance.",eligibility:"Eligible traditional industry clusters and implementing agencies under scheme guidelines.",benefits:["Cluster development","Technology support","Marketing and skill development"]},
+  {id:"nssh",name:"National SC-ST Hub",tag:"SC/ST Entrepreneurs",category:"SC/ST",supportType:"Support",beneficiary:"SC/ST",accent:"violet",icon:Users,loan:"Support based",interest:"Not a standard loan",description:"Support and facilitation for SC/ST entrepreneurs to improve participation in government procurement and enterprise development.",eligibility:"SC/ST entrepreneurs and eligible enterprises under programme guidelines.",benefits:["Procurement support","Capacity building","Market and tender assistance"]}
 ];
 
 const partners = [
@@ -68,7 +68,42 @@ function Feature({icon,title,text}){return <div className="feature-card"><div cl
 function SchemeCard({scheme,index}){const Icon=scheme.icon;return <article className="scheme-card" data-scheme-index={index+1}><div className="card-top"><div className={`scheme-icon ${scheme.accent}`}><Icon size={23}/></div><span className="scheme-tag">{scheme.tag}</span></div><h3>{scheme.name}</h3><p>{scheme.description}</p><div className="scheme-card-actions"><Link to={`/schemes/${scheme.id}`} className="card-link">View details <ArrowRight size={16}/></Link><Link to={`/compare?add=${scheme.id}`} className="compare-link">Compare</Link></div></article>;}
 
 function Schemes(){
-  return <main className="section page-section"><div className="section-heading"><div><span className="section-kicker">SCHEME DISCOVERY</span><h2>Explore Government Schemes <span className="scheme-count">{schemes.length} schemes</span></h2><p>Choose a scheme to open its dedicated information page.</p></div></div><div className="scheme-grid">{schemes.map(s=><SchemeCard key={s.id} scheme={s}/>)}</div><div className="browse-note"><CircleHelp size={17}/><span>Personal details are requested only after you choose a scheme and click Apply.</span></div></main>;
+  const [query,setQuery]=useState("");
+  const [category,setCategory]=useState("All");
+  const [support,setSupport]=useState("All");
+  const [beneficiary,setBeneficiary]=useState("All");
+
+  const filtered=useMemo(()=>{
+    const q=query.trim().toLowerCase();
+    return schemes.filter(s=>{
+      const matchesQuery=!q||[s.name,s.tag,s.description].some(v=>v.toLowerCase().includes(q));
+      return matchesQuery &&
+        (category==="All"||s.category===category) &&
+        (support==="All"||s.supportType===support) &&
+        (beneficiary==="All"||s.beneficiary===beneficiary);
+    });
+  },[query,category,support,beneficiary]);
+
+  const clearFilters=()=>{setQuery("");setCategory("All");setSupport("All");setBeneficiary("All");};
+
+  return <main className="section page-section">
+    <div className="section-heading">
+      <div><span className="section-kicker">SCHEME DISCOVERY</span><h2>Explore Government Schemes <span className="scheme-count">{schemes.length} schemes</span></h2><p>Search and filter schemes by support type, category and beneficiary.</p></div>
+    </div>
+    <div className="scheme-filters">
+      <div className="scheme-search">
+        <Search size={18}/>
+        <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search schemes..." aria-label="Search schemes"/>
+      </div>
+      <label>Category<select value={category} onChange={e=>setCategory(e.target.value)}><option>All</option><option>SC/ST</option><option>Business Loan</option><option>Micro Business</option><option>Artisans</option><option>Credit Guarantee</option><option>Traditional Industries</option></select></label>
+      <label>Support Type<select value={support} onChange={e=>setSupport(e.target.value)}><option>All</option><option>Loan</option><option>Subsidy</option><option>Credit Guarantee</option><option>Support</option></select></label>
+      <label>Beneficiary<select value={beneficiary} onChange={e=>setBeneficiary(e.target.value)}><option>All</option><option>SC/ST</option><option>Women/SC/ST</option><option>Micro Enterprises</option><option>Artisans</option><option>Traditional Industries</option></select></label>
+      <button type="button" className="filter-clear" onClick={clearFilters}>Clear filters</button>
+    </div>
+    <div className="filter-results-bar"><span><b>{filtered.length}</b> {filtered.length===1?"scheme":"schemes"} found</span>{(query||category!=="All"||support!=="All"||beneficiary!=="All")&&<button type="button" onClick={clearFilters}>Reset filters</button>}</div>
+    {filtered.length>0?<div className="scheme-grid">{filtered.map(s=><SchemeCard key={s.id} scheme={s}/>)}</div>:<div className="scheme-empty"><div className="scheme-empty-icon"><Search size={24}/></div><h3>No schemes found</h3><p>Try a different search term or clear the filters to view all available schemes.</p><button type="button" className="button button-primary" onClick={clearFilters}>View all schemes</button></div>}
+    <div className="browse-note"><CircleHelp size={17}/><span>Personal details are requested only after you choose a scheme and click Apply.</span></div>
+  </main>;
 }
 
 function SchemeDetails(){
