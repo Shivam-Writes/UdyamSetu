@@ -918,3 +918,9 @@ img, svg {
 .match-reasons span{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#f3f1ff;color:#5a50a8;font-size:8px;font-weight:800}
 .match-reasons svg{flex:none}
 @media(max-width:600px){.match-reasons{margin-top:9px}.match-reasons span{font-size:8px}}
+
+/* Language toggle */
+.language-toggle{height:34px;display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid #dedee8;border-radius:999px;background:#fff;color:#73798a;cursor:pointer;font-size:9px;font-weight:800}
+.language-toggle span{padding:6px 8px;border-radius:999px;line-height:1}
+.language-toggle span.active{background:#5547dc;color:#fff}
+@media(max-width:600px){.language-toggle{height:31px;font-size:8px}.language-toggle span{padding:5px 6px}}
