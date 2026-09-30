@@ -123,16 +123,19 @@ function Eligibility(){
 }
 
 function Recommendations(){
-  const navigate=useNavigate(); const profile=JSON.parse(localStorage.getItem("udyamProfile")||"{}");
-  const selectedId=localStorage.getItem("udyamSelectedScheme")||"";
-  const selectedScheme=schemes.find(s=>s.id===selectedId);
+  const navigate=useNavigate();
+  const profile=JSON.parse(localStorage.getItem("udyamProfile")||"{}");
   const eligible=profile.category==="SC" && profile.income!=="Above ₹5 Lakh";
-  const ranked=useMemo(()=>schemes.map((s,i)=>({...s,match:eligible?[94,86,78][i]:[61,57,52][i]})),[eligible]);
+  const ranked=useMemo(()=>schemes.map((s,i)=>({...s,match:eligible?Math.max(55,94-i*5):Math.max(45,70-i*4)})),[eligible]);
 
   const startApplication=(scheme)=>{
     const existing=JSON.parse(localStorage.getItem("udyamApplications")||"[]");
     const current=existing.find(a=>a.schemeId===scheme.id);
-    if(current){ localStorage.setItem("udyamActiveApplication",current.id); navigate("/tracker"); return; }
+    if(current){
+      localStorage.setItem("udyamActiveApplication",current.id);
+      navigate("/tracker");
+      return;
+    }
     const application={
       id:`US-${new Date().getFullYear()}-${Math.floor(10000+Math.random()*90000)}`,
       schemeId:scheme.id,
@@ -146,7 +149,35 @@ function Recommendations(){
     navigate("/tracker");
   };
 
-  return <main className="flow-page"><StepHeader step={3}/><div className="wide-card"><div className="results-heading"><div><span className="section-kicker">PERSONALIZED SHORTLIST</span><h1>Recommended schemes</h1><p>Based on the profile and support needs entered in this prototype.</p></div><div className="profile-pill"><CheckCircle2 size={16}/> {eligible?"Profile matches basic prototype rules":"Review eligibility details"}</div></div><div className="recommendation-list">{ranked.map(s=>{const Icon=s.icofunction Compare(){
+  return <main className="flow-page">
+    <StepHeader step={3}/>
+    <div className="wide-card">
+      <div className="results-heading">
+        <div><span className="section-kicker">PERSONALIZED SHORTLIST</span><h1>Recommended schemes</h1><p>Based on the profile and support needs entered in this prototype.</p></div>
+        <div className="profile-pill"><CheckCircle2 size={16}/> {eligible?"Profile matches basic prototype rules":"Review eligibility details"}</div>
+      </div>
+      <div className="recommendation-list">
+        {ranked.map(s=>{
+          const Icon=s.icon;
+          return <article className="result-card" key={s.id}>
+            <div className={`scheme-icon ${s.accent}`}><Icon size={23}/></div>
+            <div className="result-main">
+              <div className="result-title"><h3>{s.name}</h3><span>{s.tag}</span></div>
+              <p>{s.description}</p>
+              <div className="recommendation-actions">
+                <Link to={`/schemes/${s.id}`} className="button button-secondary">View Details</Link>
+                <button className="button button-primary" onClick={()=>startApplication(s)}>Start Application <ArrowRight size={16}/></button>
+              </div>
+            </div>
+            <div className="match-score"><strong>{s.match}%</strong><span>prototype match</span><Link to={`/compare?add=${s.id}`} aria-label={`Compare ${s.name}`}><ChevronRight size={18}/></Link></div>
+          </article>;
+        })}
+      </div>
+    </div>
+  </main>;
+}
+
+function Compare(){
   const navigate=useNavigate();
   const params=new URLSearchParams(window.location.hash.split("?")[1]||"");
   const initial=params.get("add");
