@@ -262,8 +262,6 @@ function Tracker(){
   </main>;
 }
 
-n;return <div className="result-card" key={s.id}><div className={`scheme-icon ${s.accent}`}><Icon size={24}/></div><div className="result-main"><div className="result-title"><h3>{s.name}</h3><span>{s.tag}</span></div><p>{s.description}</p><div className="result-meta"><b>{s.loan}</b><span>{s.interest}</span></div></div><div className="match-score"><strong>{s.match}%</strong><span>Match</span><button className="icon-action" onClick={()=>startApplication(s)} aria-label={`Start application for ${s.name}`}><ArrowRight size={18}/></button></div></div>})}</div><div className="recommendation-actions"><button onClick={()=>navigate("/emi-calculator")} className="button button-primary">Estimate EMI <Calculator size={17}/></button><button onClick={()=>navigate("/partners")} className="button button-secondary">Find a Partner <MapPin size={17}/></button></div>{selectedScheme&&<div className="tracker-hint"><ClipboardCheck size={17}/><span>You selected <b>{selectedScheme.name}</b>. Use the arrow on that scheme to start tracking its application.</span></div>}</div></main>;
-}
 
 function Documents(){
   const applications=JSON.parse(localStorage.getItem("udyamApplications")||"[]");
