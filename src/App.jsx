@@ -9,9 +9,33 @@ import {
   LogIn, Building2, ClipboardCheck, Clock3, UploadCloud, CircleDot, AlertCircle
 } from "lucide-react";
 
-const translations={
-  en:{home:"Home",schemes:"Schemes",calculator:"EMI Calculator",partners:"Partners",compare:"Compare",tracker:"Tracker",about:"About",login:"Login",getStarted:"Get Started",heroEyebrow:"{t("heroEyebrow")}",heroTitle:"Find the Right Government Scheme for Your Growth.",heroText:"{t("heroText")}",explore:"Explore Schemes",popular:"Popular Schemes",viewAll:"View all schemes",discover:"DISCOVER SUPPORT",schemeDiscovery:"SCHEME DISCOVERY",exploreGov:"Explore Government Schemes",search:"Search schemes...",category:"Category",support:"Support Type",beneficiary:"Beneficiary",all:"All",clear:"Clear filters",found:"schemes found",noSchemes:"No schemes found",noSchemesText:"Try a different search term or clear the filters to view all available schemes.",viewDetails:"View details",compareAction:"Compare"},
-  hi:{home:"होम",schemes:"योजनाएँ",calculator:"EMI कैलकुलेटर",partners:"साझेदार",compare:"तुलना",tracker:"ट्रैकर",about:"हमारे बारे में",login:"लॉगिन",getStarted:"शुरू करें",heroEyebrow:"उद्यम शुरू करने वालों के लिए",heroTitle:"अपने विकास के लिए सही सरकारी योजना खोजें।",heroText:"उपयुक्त सरकारी योजनाएँ खोजें, पात्रता समझें, EMI का अनुमान लगाएँ और सही चैनल पार्टनर खोजें — सब एक ही जगह।",explore:"योजनाएँ देखें",popular:"लोकप्रिय योजनाएँ",viewAll:"सभी योजनाएँ देखें",discover:"सहायता खोजें",schemeDiscovery:"योजना खोज",exploreGov:"सरकारी योजनाएँ देखें",search:"योजनाएँ खोजें...",category:"श्रेणी",support:"सहायता प्रकार",beneficiary:"लाभार्थी",all:"सभी",clear:"फ़िल्टर साफ़ करें",found:"योजनाएँ मिलीं",noSchemes:"कोई योजना नहीं मिली",noSchemesText:"कोई दूसरा शब्द आज़माएँ या सभी योजनाएँ देखने के लिए फ़िल्टर साफ़ करें।",viewDetails:"विवरण देखें",compareAction:"तुलना करें"}
+const translations = {
+  en: {
+    home: "Home", schemes: "Schemes", calculator: "EMI Calculator", partners: "Partners",
+    compare: "Compare", tracker: "Tracker", about: "About", login: "Login", getStarted: "Get Started",
+    heroEyebrow: "Built for aspiring entrepreneurs",
+    heroTitle: "Find the Right Government Scheme for Your Growth.",
+    heroText: "Discover relevant government schemes, understand eligibility, estimate EMI and find the right channel partner — all in one place.",
+    explore: "Explore Schemes", popular: "Popular Schemes", viewAll: "View all schemes",
+    discover: "DISCOVER SUPPORT", schemeDiscovery: "SCHEME DISCOVERY", exploreGov: "Explore Government Schemes",
+    search: "Search schemes...", category: "Category", support: "Support Type", beneficiary: "Beneficiary",
+    all: "All", clear: "Clear filters", found: "schemes found", noSchemes: "No schemes found",
+    noSchemesText: "Try a different search term or clear the filters to view all available schemes.",
+    viewDetails: "View details", compareAction: "Compare"
+  },
+  hi: {
+    home: "होम", schemes: "योजनाएँ", calculator: "EMI कैलकुलेटर", partners: "साझेदार",
+    compare: "तुलना", tracker: "ट्रैकर", about: "हमारे बारे में", login: "लॉगिन", getStarted: "शुरू करें",
+    heroEyebrow: "उद्यम शुरू करने वालों के लिए",
+    heroTitle: "अपने विकास के लिए सही सरकारी योजना खोजें।",
+    heroText: "उपयुक्त सरकारी योजनाएँ खोजें, पात्रता समझें, EMI का अनुमान लगाएँ और सही चैनल पार्टनर खोजें — सब एक ही जगह।",
+    explore: "योजनाएँ देखें", popular: "लोकप्रिय योजनाएँ", viewAll: "सभी योजनाएँ देखें",
+    discover: "सहायता खोजें", schemeDiscovery: "योजना खोज", exploreGov: "सरकारी योजनाएँ देखें",
+    search: "योजनाएँ खोजें...", category: "श्रेणी", support: "सहायता प्रकार", beneficiary: "लाभार्थी",
+    all: "सभी", clear: "फ़िल्टर साफ़ करें", found: "योजनाएँ मिलीं", noSchemes: "कोई योजना नहीं मिली",
+    noSchemesText: "कोई दूसरा शब्द आज़माएँ या सभी योजनाएँ देखने के लिए फ़िल्टर साफ़ करें।",
+    viewDetails: "विवरण देखें", compareAction: "तुलना करें"
+  }
 };
 const LanguageContext=React.createContext(null);
 function LanguageProvider({children}){const [language,setLanguage]=useState(()=>localStorage.getItem("udyamLanguage")||"en");const toggle=()=>setLanguage(prev=>{const next=prev==="en"?"hi":"en";localStorage.setItem("udyamLanguage",next);return next;});const t=key=>translations[language][key]||translations.en[key]||key;return <LanguageContext.Provider value={{language,t,toggle}}>{children}</LanguageContext.Provider>;}
