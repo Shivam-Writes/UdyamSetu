@@ -404,6 +404,39 @@ function Documents(){
     </div>}
   </main>;
 }
+function Dashboard(){
+  const navigate=useNavigate();
+  const profile=JSON.parse(localStorage.getItem("udyamProfile")||"{}");
+  const applications=JSON.parse(localStorage.getItem("udyamApplications")||"[]");
+  const activeId=localStorage.getItem("udyamActiveApplication");
+  const active=applications.find(a=>a.id===activeId)||applications[0]||null;
+  const docs=active?JSON.parse(localStorage.getItem("udyamDocuments_"+active.id)||"[]"):[];
+  const completedDocs=docs.filter(d=>d.done).length;
+  return <main className="dashboard-page">
+    <div className="dashboard-heading"><div><span className="section-kicker">MY UDYAMSETU</span><h1>{profile.name?"Welcome back, "+profile.name:"Welcome to your dashboard"}</h1><p>Manage your profile, applications and next steps from one place.</p></div><Link to="/schemes" className="button button-primary">Explore Schemes <ArrowRight size={17}/></Link></div>
+    <div className="dashboard-stat-grid">
+      <div className="dashboard-stat"><div className="dashboard-stat-icon violet"><Users size={19}/></div><div><span>Profile</span><strong>{profile.name?"Completed":"Not started"}</strong></div></div>
+      <div className="dashboard-stat"><div className="dashboard-stat-icon blue"><FileText size={19}/></div><div><span>Applications</span><strong>{applications.length}</strong></div></div>
+      <div className="dashboard-stat"><div className="dashboard-stat-icon amber"><ClipboardCheck size={19}/></div><div><span>Current status</span><strong>{active?.status||"No application"}</strong></div></div>
+      <div className="dashboard-stat"><div className="dashboard-stat-icon violet"><CheckCircle2 size={19}/></div><div><span>Documents ready</span><strong>{active?completedDocs+"/"+docs.length:"—"}</strong></div></div>
+    </div>
+    <div className="dashboard-grid-main">
+      <section className="dashboard-panel"><div className="dashboard-panel-head"><div><span className="section-kicker">ACTIVE APPLICATION</span><h2>{active?active.schemeName:"No active application"}</h2></div>{active&&<span className="dashboard-status">{active.status}</span>}</div>
+      {active?<><div className="dashboard-progress-head"><span>Application progress</span><b>{active.progress}%</b></div><div className="dashboard-progress"><span style={{width:active.progress+"%"}}/></div><div className="dashboard-meta"><div><span>Application ID</span><b>{active.id}</b></div><div><span>Started</span><b>{active.createdAt}</b></div></div><div className="dashboard-actions"><Link to="/tracker" className="button button-primary">Open Tracker <ArrowRight size={16}/></Link><Link to="/documents" className="button button-secondary">Documents</Link></div></>:<div className="dashboard-empty"><FileText size={26}/><p>Start an application to see its progress here.</p><Link to="/schemes" className="text-link">Browse schemes <ArrowRight size={16}/></Link></div>}</section>
+      <section className="dashboard-panel"><div className="dashboard-panel-head"><div><span className="section-kicker">QUICK ACTIONS</span><h2>What do you need?</h2></div></div><div className="dashboard-quick-grid">
+        <button onClick={()=>navigate("/schemes")}><Landmark size={20}/><span>Find a scheme</span><ArrowRight size={15}/></button>
+        <button onClick={()=>navigate("/compare")}><CircleHelp size={20}/><span>Compare schemes</span><ArrowRight size={15}/></button>
+        <button onClick={()=>navigate("/emi-calculator")}><Calculator size={20}/><span>Calculate EMI</span><ArrowRight size={15}/></button>
+        <button onClick={()=>navigate("/partners")}><MapPin size={20}/><span>Find a partner</span><ArrowRight size={15}/></button>
+      </div></section>
+    </div>
+    <section className="dashboard-panel dashboard-applications"><div className="dashboard-panel-head"><div><span className="section-kicker">APPLICATIONS</span><h2>Your applications</h2></div><Link to="/tracker" className="text-link">Open tracker <ArrowRight size={16}/></Link></div>
+      {applications.length?<div className="dashboard-application-list">{applications.map(app=><button key={app.id} className={active?.id===app.id?"active":""} onClick={()=>{localStorage.setItem("udyamActiveApplication",app.id);navigate("/tracker");}}><div><b>{app.schemeName}</b><span>{app.id} • {app.createdAt}</span></div><div><strong>{app.progress}%</strong><small>{app.status}</small></div><ChevronRight size={17}/></button>)}</div>:<div className="dashboard-empty"><p>No applications yet.</p><Link to="/schemes" className="button button-secondary">Explore Schemes</Link></div>}
+    </section>
+    <div className="dashboard-note"><AlertCircle size={18}/><div><b>Prototype dashboard</b><p>Your information and demo applications are stored locally in this browser. This is not connected to a government account or application system.</p></div></div>
+  </main>;
+}
+
 function EMICalculator(){
   const [amount,setAmount]=useState(1000000),[rate,setRate]=useState(7),[years,setYears]=useState(5); const r=rate/12/100,n=years*12;
   const emi=r===0?amount/n:(amount*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1); const total=emi*n,interest=total-amount;
@@ -437,7 +470,7 @@ function App(){
     <Route path="/" element={<Home/>}/><Route path="/schemes" element={<Schemes/>}/><Route path="/schemes/:id" element={<SchemeDetails/>}/>
     <Route path="/apply/:schemeId" element={<Apply schemeId={null}/>}/>
     <Route path="/profile" element={<Profile/>}/><Route path="/eligibility" element={<Eligibility/>}/><Route path="/recommendations" element={<Recommendations/>}/>
-    <Route path="/compare" element={<Compare/>}/><Route path="/tracker" element={<Tracker/>}/><Route path="/documents" element={<Documents/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
+    <Route path="/compare" element={<Compare/>}/><Route path="/dashboard" element={<Dashboard/>}/><Route path="/tracker" element={<Tracker/>}/><Route path="/documents" element={<Documents/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
   </Routes></LanguageProvider>;
 }
 export default App;
