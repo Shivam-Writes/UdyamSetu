@@ -160,8 +160,47 @@ function Eligibility(){
 function Recommendations(){
   const navigate=useNavigate();
   const profile=JSON.parse(localStorage.getItem("udyamProfile")||"{}");
-  const eligible=profile.category==="SC" && profile.income!=="Above ₹5 Lakh";
-  const ranked=useMemo(()=>schemes.map((s,i)=>({...s,match:eligible?Math.max(55,94-i*5):Math.max(45,70-i*4)})),[eligible]);
+  const needs=JSON.parse(localStorage.getItem("udyamEligibility")||"{}");
+
+  const scoreScheme=(scheme)=>{
+    let score=40;
+    const reasons=[];
+    const category=profile.category||"";
+    const income=profile.income||"";
+    const sector=needs.sector||"";
+    const purpose=needs.need||"";
+    const loan=needs.loan||"";
+    const stage=needs.stage||"";
+
+    if((scheme.beneficiary==="SC/ST"&&["SC","ST"].includes(category))||(scheme.beneficiary==="Women/SC/ST"&&["SC","ST"].includes(category))){
+      score+=22; reasons.push("Category aligns");
+    } else if(scheme.beneficiary==="Micro Enterprises"){
+      score+=12; reasons.push("Micro-business support");
+    } else if(scheme.beneficiary==="Artisans"&&sector==="Artisan / Craft"){
+      score+=25; reasons.push("Artisan sector aligns");
+    } else if(scheme.beneficiary==="Traditional Industries"&&sector==="Artisan / Craft"){
+      score+=14; reasons.push("Traditional-industry fit");
+    }
+
+    if(sector==="Artisan / Craft"&&(scheme.id==="pm-vishwakarma"||scheme.id==="sfurti")){score+=12;reasons.push("Sector matches");}
+    if((purpose==="Starting a Business"||purpose==="Business Expansion")&&(scheme.id==="pmegp"||scheme.id==="stand-up-india"||scheme.id==="mudra")){score+=10;reasons.push("Business purpose matches");}
+    if(purpose==="Working Capital"&&(scheme.id==="mudra"||scheme.id==="cgtmse")){score+=10;reasons.push("Working-capital support");}
+    if(purpose==="Equipment Purchase"&&(scheme.id==="pm-vishwakarma"||scheme.id==="cgtmse")){score+=8;reasons.push("Equipment need matches");}
+
+    if(loan==="Below ₹5 Lakh"&&["mudra","pm-vishwakarma"].includes(scheme.id)){score+=7;reasons.push("Loan range fits");}
+    if(loan==="₹5–10 Lakh"&&["mudra","pmegp","stand-up-india","cgtmse"].includes(scheme.id)){score+=7;reasons.push("Loan range fits");}
+    if(loan==="₹10–25 Lakh"&&["pm-suraj","stand-up-india","pmegp","mudra","cgtmse"].includes(scheme.id)){score+=7;reasons.push("Loan range fits");}
+    if(loan==="Above ₹25 Lakh"&&["pmegp","stand-up-india"].includes(scheme.id)){score+=7;reasons.push("Higher funding range");}
+
+    if(stage==="Idea Stage"&&["pmegp","stand-up-india"].includes(scheme.id)){score+=6;reasons.push("New-business fit");}
+    if((stage==="Existing Business"||stage==="Expansion")&&["mudra","cgtmse","nssh"].includes(scheme.id)){score+=6;reasons.push("Existing-business fit");}
+    if(income==="Above ₹5 Lakh"&&scheme.beneficiary==="SC/ST"){score-=8;}
+    if(!profile.name||!profile.income||!needs.need){score-=5;}
+
+    return {...scheme,match:Math.min(98,Math.max(35,score)),reasons:reasons.slice(0,3)};
+  };
+
+  const ranked=useMemo(()=>schemes.map(scoreScheme).sort((a,b)=>b.match-a.match),[profile.category,profile.income,needs.sector,needs.need,needs.loan,needs.stage]);
 
   const startApplication=(scheme)=>{
     const existing=JSON.parse(localStorage.getItem("udyamApplications")||"[]");
@@ -199,6 +238,7 @@ function Recommendations(){
             <div className="result-main">
               <div className="result-title"><h3>{s.name}</h3><span>{s.tag}</span></div>
               <p>{s.description}</p>
+              {s.reasons.length>0&&<div className="match-reasons">{s.reasons.map(reason=><span key={reason}><CheckCircle2 size={12}/>{reason}</span>)}</div>}
               <div className="recommendation-actions">
                 <Link to={`/schemes/${s.id}`} className="button button-secondary">View Details</Link>
                 <button className="button button-primary" onClick={()=>startApplication(s)}>Start Application <ArrowRight size={16}/></button>
