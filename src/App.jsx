@@ -178,6 +178,7 @@ function Recommendations(){
 }
 
 function Compare(){
+  // Compare up to three schemes.
   const navigate=useNavigate();
   const params=new URLSearchParams(window.location.hash.split("?")[1]||"");
   const initial=params.get("add");
