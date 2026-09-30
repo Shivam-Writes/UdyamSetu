@@ -64,7 +64,7 @@ function Navbar(){
   return <header className="navbar">
     <Link to="/" className="brand"><div className="brand-mark">U</div><div><div className="brand-name">UdyamSetu</div><div className="brand-subtitle">Sarkari Yojana se Aapke Udyam Tak</div></div></Link>
     <nav className="nav-links">
-      <NavLink to="/" end>{t("home")}</NavLink><NavLink to="/schemes">{t("schemes")}</NavLink><NavLink to="/emi-calculator">{t("calculator")}</NavLink><NavLink to="/partners">{t("partners")}</NavLink><NavLink to="/compare">{t("compare")}</NavLink><NavLink to="/tracker">{t("tracker")}</NavLink><NavLink to="/about">{t("about")}</NavLink>
+      <NavLink to="/" end>{t("home")}</NavLink><NavLink to="/schemes">{t("schemes")}</NavLink><NavLink to="/emi-calculator">{t("calculator")}</NavLink><NavLink to="/partners">{t("partners")}</NavLink><NavLink to="/tracker">{t("tracker")}</NavLink><NavLink to="/about">{t("about")}</NavLink>
     </nav>
     <div className="nav-actions"><LanguageToggle/><button className="search-button" aria-label="Search"><Search size={18}/></button><Link className="login-link" to="/login">{t("login")}</Link><Link className="button button-primary button-small" to="/schemes">{t("getStarted")}</Link></div>
   </header>;
@@ -99,7 +99,7 @@ function Home(){
 }
 
 function Feature({icon,title,text}){return <div className="feature-card"><div className="feature-icon">{icon}</div><div><h3>{title}</h3><p>{text}</p></div></div>;}
-function SchemeCard({scheme,index}){const {t}=useLanguage(); const Icon=scheme.icon;return <article className="scheme-card" data-scheme-index={index+1}><div className="card-top"><div className={`scheme-icon ${scheme.accent}`}><Icon size={23}/></div><span className="scheme-tag">{scheme.tag}</span></div><h3>{scheme.name}</h3><p>{scheme.description}</p><div className="scheme-card-actions"><Link to={`/schemes/${scheme.id}`} className="card-link">{t("viewDetails")} <ArrowRight size={16}/></Link><Link to={`/compare?add=${scheme.id}`} className="compare-link">{t("compareAction")}</Link></div></article>;}
+function SchemeCard({scheme,index,compareIds,onToggleCompare}){const {t}=useLanguage();const Icon=scheme.icon;const selected=compareIds?.includes(scheme.id);return <article className="scheme-card" data-scheme-index={index+1}><div className="card-top"><div className={`scheme-icon ${scheme.accent}`}><Icon size={23}/></div><span className="scheme-tag">{scheme.tag}</span></div><h3>{scheme.name}</h3><p>{scheme.description}</p><div className="scheme-card-actions"><Link to={`/schemes/${scheme.id}`} className="card-link">{t("viewDetails")} <ArrowRight size={16}/></Link><button type="button" className={`compare-link ${selected?"selected":""}`} onClick={()=>onToggleCompare?.(scheme.id)}>{selected?"✓ Selected":t("compareAction")}</button></div></article>;}
 
 function Schemes(){
   const {t}=useLanguage();
@@ -107,36 +107,46 @@ function Schemes(){
   const [category,setCategory]=useState("All");
   const [support,setSupport]=useState("All");
   const [beneficiary,setBeneficiary]=useState("All");
+  const [compareIds,setCompareIds]=useState(()=>JSON.parse(localStorage.getItem("udyamCompare")||"[]").filter(id=>schemes.some(s=>s.id===id)).slice(0,3));
+  const [showCompare,setShowCompare]=useState(false);
 
   const filtered=useMemo(()=>{
     const q=query.trim().toLowerCase();
     return schemes.filter(s=>{
       const matchesQuery=!q||[s.name,s.tag,s.description].some(v=>v.toLowerCase().includes(q));
-      return matchesQuery &&
-        (category==="All"||s.category===category) &&
-        (support==="All"||s.supportType===support) &&
-        (beneficiary==="All"||s.beneficiary===beneficiary);
+      return matchesQuery&&(category==="All"||s.category===category)&&(support==="All"||s.supportType===support)&&(beneficiary==="All"||s.beneficiary===beneficiary);
     });
   },[query,category,support,beneficiary]);
 
   const clearFilters=()=>{setQuery("");setCategory("All");setSupport("All");setBeneficiary("All");};
+  const toggleCompare=id=>{
+    const next=compareIds.includes(id)?compareIds.filter(x=>x!==id):compareIds.length<3?[...compareIds,id]:compareIds;
+    setCompareIds(next);localStorage.setItem("udyamCompare",JSON.stringify(next));
+  };
+  const selected=compareIds.map(id=>schemes.find(s=>s.id===id)).filter(Boolean);
+  const comparisonRows=[["Eligibility","eligibility"],["Loan / Support","loan"],["Interest","interest"],["Purpose","description"],["Key Benefits","benefits"]];
 
   return <main className="section page-section">
-    <div className="section-heading">
-      <div><span className="section-kicker">{t("schemeDiscovery")}</span><h2>{t("exploreGov")} <span className="scheme-count">{schemes.length} schemes</span></h2><p>Search and filter schemes by support type, category and beneficiary.</p></div>
-    </div>
+    <div className="section-heading"><div><span className="section-kicker">{t("schemeDiscovery")}</span><h2>{t("exploreGov")} <span className="scheme-count">{schemes.length} schemes</span></h2><p>Search and filter schemes by support type, category and beneficiary.</p></div></div>
     <div className="scheme-filters">
-      <div className="scheme-search">
-        <Search size={18}/>
-        <input value={query} onChange={e=>setQuery(e.target.value)} placeholder={t("search")} aria-label="Search schemes"/>
-      </div>
+      <div className="scheme-search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder={t("search")} aria-label="Search schemes"/></div>
       <label>{t("category")}<select value={category} onChange={e=>setCategory(e.target.value)}><option>All</option><option>SC/ST</option><option>Business Loan</option><option>Micro Business</option><option>Artisans</option><option>Credit Guarantee</option><option>Traditional Industries</option></select></label>
       <label>{t("support")}<select value={support} onChange={e=>setSupport(e.target.value)}><option>All</option><option>Loan</option><option>Subsidy</option><option>Credit Guarantee</option><option>Support</option></select></label>
       <label>{t("beneficiary")}<select value={beneficiary} onChange={e=>setBeneficiary(e.target.value)}><option>All</option><option>SC/ST</option><option>Women/SC/ST</option><option>Micro Enterprises</option><option>Artisans</option><option>Traditional Industries</option></select></label>
       <button type="button" className="filter-clear" onClick={clearFilters}>{t("clear")}</button>
     </div>
-    <div className="filter-results-bar"><span><b>{filtered.length}</b> {filtered.length===1?"scheme":"schemes"} found</span>{(query||category!=="All"||support!=="All"||beneficiary!=="All")&&<button type="button" onClick={clearFilters}>Reset filters</button>}</div>
-    {filtered.length>0?<div className="scheme-grid">{filtered.map(s=><SchemeCard key={s.id} scheme={s}/>)}</div>:<div className="scheme-empty"><div className="scheme-empty-icon"><Search size={24}/></div><h3>{t("noSchemes")}</h3><p>{t("noSchemesText")}</p><button type="button" className="button button-primary" onClick={clearFilters}>{t("viewAll")}</button></div>}
+    <div className="filter-results-bar"><span><b>{filtered.length}</b> {t("found")}</span>{(query||category!=="All"||support!=="All"||beneficiary!=="All")&&<button type="button" onClick={clearFilters}>Reset filters</button>}</div>
+    {filtered.length>0?<div className="scheme-grid">{filtered.map(s=><SchemeCard key={s.id} scheme={s} index={schemes.indexOf(s)} compareIds={compareIds} onToggleCompare={toggleCompare}/>)}</div>:<div className="scheme-empty"><div className="scheme-empty-icon"><Search size={24}/></div><h3>{t("noSchemes")}</h3><p>{t("noSchemesText")}</p><button type="button" className="button button-primary" onClick={clearFilters}>{t("viewAll")}</button></div>}
+
+    {selected.length>0&&<div className="compare-dock"><div><b>{selected.length} scheme{selected.length>1?"s":""} selected</b><span>{selected.length<3?"Select up to 3 schemes to compare":"Ready to compare"}</span></div><div className="compare-dock-actions"><button className="compare-clear" onClick={()=>{setCompareIds([]);localStorage.removeItem("udyamCompare")}}>Clear</button><button className="button button-primary" onClick={()=>setShowCompare(true)} disabled={selected.length<2}>Compare selected <ArrowRight size={16}/></button></div></div>}
+
+    {showCompare&&<div className="compare-modal-backdrop" onClick={()=>setShowCompare(false)}><div className="compare-modal" onClick={e=>e.stopPropagation()}>
+      <div className="compare-modal-head"><div><span className="section-kicker">SCHEME COMPARISON</span><h2>Compare selected schemes</h2></div><button className="compare-close" onClick={()=>setShowCompare(false)}>×</button></div>
+      <div className="compare-modal-table"><div className="compare-modal-row compare-modal-header"><div>Compare</div>{selected.map(s=><div key={s.id}><b>{s.name}</b></div>)}</div>
+      {comparisonRows.map(([label,key])=><div className="compare-modal-row" key={key}><div><b>{label}</b></div>{selected.map(s=><div key={s.id}>{key==="benefits"?<ul>{s.benefits.map(b=><li key={b}><CheckCircle2 size={12}/>{b}</li>)}</ul>:s[key]}</div>)}</div>)}
+      <div className="compare-modal-actions"><button className="button button-secondary" onClick={()=>setShowCompare(false)}>Continue browsing</button>{selected.map(s=><Link key={s.id} to={"/schemes/"+s.id} className="button button-primary">View {s.name}</Link>)}</div></div>
+    </div></div>}
+
     <div className="browse-note"><CircleHelp size={17}/><span>Personal details are requested only after you choose a scheme and click Apply.</span></div>
   </main>;
 }
@@ -287,30 +297,6 @@ function Recommendations(){
   </main>;
 }
 
-function Compare(){
-  // Compare up to three schemes.
-  const navigate=useNavigate();
-  const params=new URLSearchParams(window.location.hash.split("?")[1]||"");
-  const initial=params.get("add");
-  const [selectedIds,setSelectedIds]=useState(()=>{const saved=JSON.parse(localStorage.getItem("udyamCompare")||"[]");return initial&&!saved.includes(initial)?[...saved,initial].slice(-3):saved.filter(id=>schemes.some(s=>s.id===id)).slice(0,3);});
-  const selected=selectedIds.map(id=>schemes.find(s=>s.id===id)).filter(Boolean);
-  const toggle=id=>{const next=selectedIds.includes(id)?selectedIds.filter(x=>x!==id):selectedIds.length<3?[...selectedIds,id]:selectedIds;setSelectedIds(next);localStorage.setItem("udyamCompare",JSON.stringify(next));};
-  const rows=[
-    ["Eligibility","eligibility"],["Loan / Support","loan"],["Interest","interest"],
-    ["Purpose","description"],["Key Benefits","benefits"],["Application Route","route"],
-  ];
-  return <main className="compare-page">
-    <div className="calculator-heading"><span className="section-kicker">SCHEME COMPARISON</span><h1>Compare government schemes</h1><p>Select up to 3 schemes and compare their key details before choosing your next step.</p></div>
-    <div className="compare-selector"><div><b>Select schemes</b><span>{selected.length}/3 selected</span></div><div className="compare-options">{schemes.map(s=><button key={s.id} className={"compare-option "+(selectedIds.includes(s.id)?"selected":"")} onClick={()=>toggle(s.id)}><span className={"scheme-icon "+s.accent}>{React.createElement(s.icon,{size:18})}</span><span>{s.name}</span>{selectedIds.includes(s.id)&&<CheckCircle2 size={16}/>}</button>)}</div></div>
-    {selected.length===0?<div className="compare-empty"><div className="tracker-empty-icon"><Landmark size={28}/></div><h2>Choose schemes to compare</h2><p>Select two or three schemes above to see their differences side by side.</p></div>:
-    <div className="compare-table-wrap"><div className="compare-table">
-      <div className="compare-row compare-header"><div className="compare-label">Compare</div>{selected.map(s=>{const Icon=s.icon;return <div className="compare-scheme" key={s.id}><div className={"scheme-icon "+s.accent}><Icon size={20}/></div><b>{s.name}</b><button onClick={()=>toggle(s.id)} aria-label={"Remove "+s.name}>×</button></div>})}</div>
-      {rows.map(([label,key])=><div className="compare-row" key={key}><div className="compare-label">{label}</div>{selected.map(s=><div className="compare-cell" key={s.id}>{key==="benefits"?<ul>{s.benefits.map(b=><li key={b}><CheckCircle2 size={13}/>{b}</li>)}</ul>:key==="route"?<span>Partner / official channel</span>:<span>{s[key]}</span>}</div>)}</div>)}
-      <div className="compare-row compare-actions-row"><div className="compare-label">Next step</div>{selected.map(s=><div className="compare-cell" key={s.id}><Link to={"/schemes/"+s.id} className="button button-secondary">View Details</Link><Link to={"/apply/"+s.id} className="button button-primary">Apply <ArrowRight size={15}/></Link></div>)}</div>
-    </div></div>}
-    <div className="compare-note"><CircleHelp size={16}/><span>Comparison information is for this prototype. Always verify current eligibility, loan limits and requirements with the official scheme source.</span></div>
-  </main>;
-}
 function Tracker(){
   const [applications,setApplications]=useState([]);
   const [selected,setSelected]=useState(null);
@@ -470,7 +456,7 @@ function App(){
     <Route path="/" element={<Home/>}/><Route path="/schemes" element={<Schemes/>}/><Route path="/schemes/:id" element={<SchemeDetails/>}/>
     <Route path="/apply/:schemeId" element={<Apply schemeId={null}/>}/>
     <Route path="/profile" element={<Profile/>}/><Route path="/eligibility" element={<Eligibility/>}/><Route path="/recommendations" element={<Recommendations/>}/>
-    <Route path="/compare" element={<Compare/>}/><Route path="/dashboard" element={<Dashboard/>}/><Route path="/tracker" element={<Tracker/>}/><Route path="/documents" element={<Documents/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
+    <Route path="/dashboard" element={<Dashboard/>}/><Route path="/tracker" element={<Tracker/>}/><Route path="/documents" element={<Documents/>}/><Route path="/emi-calculator" element={<EMICalculator/>}/><Route path="/partners" element={<Partners/>}/><Route path="/about" element={<About/>}/><Route path="/login" element={<Login/>}/>
   </Routes></LanguageProvider>;
 }
 export default App;
